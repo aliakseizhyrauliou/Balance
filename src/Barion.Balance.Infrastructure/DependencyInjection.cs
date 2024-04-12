@@ -1,8 +1,11 @@
 using Ardalis.GuardClauses;
 using Barion.Balance.Application.Common.Interfaces;
+using Barion.Balance.Application.Common.Repositories;
+using Barion.Balance.Domain.Services;
 using Barion.Balance.Infrastructure.Data;
 using Barion.Balance.Infrastructure.Data.Interceptors;
 using Barion.Balance.Infrastructure.Data.Repositories;
+using Barion.Balance.Infrastructure.External.BePaid;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
@@ -30,6 +33,7 @@ public static class DependencyInjection
         });
         
         services.AddScoped<IBalanceDbContext>(provider => provider.GetRequiredService<BalanceDbContext>());
+        services.AddScoped<IPaymentSystemConfigurationService, BePaidConfigurationService>();
         
         services.AddScoped<ApplicationDbContextInitialiser>();
         
@@ -42,6 +46,7 @@ public static class DependencyInjection
 
     private static void AddRepositories(this IServiceCollection services)
     {
+        services.AddScoped<IPaymentSystemConfigurationRepository, PaymentSystemConfigurationRepository>();
         services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>();
     }
 }

@@ -13,15 +13,17 @@ public class BalanceDbContext : DbContext, IBalanceDbContext
     public DbSet<PaymentMethod> PaymentMethods { get; set; }
     public DbSet<AccountRecord> AccountRecords { get; set; }
     public DbSet<Hold> Holds { get; set; }
-    
+    public DbSet<PaymentSystemConfiguration> PaymentSystemConfigurations { get; set; }
+    public async Task MigrateDatabase()
+    {
+        await Database.MigrateAsync();
+    }
+
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
-
-    public override DbSet<TEntity> Set<TEntity>()
-    {
-        return base.Set<TEntity>();
-    }
+    
 }
