@@ -1,12 +1,13 @@
 using Barion.Balance.Domain.Entities;
-using Barion.Balance.Domain.Services.Models;
 
 namespace Barion.Balance.Domain.Services;
 
 public interface IPaymentSystemService
 {
-    Task<Hold> MakeHold(MakeHold makeHold,
-        PaymentSystemConfiguration paymentSystemConfiguration,
+    Task<string> GeneratePaymentSystemWidget(PaymentSystemWidgetGeneration paymentSystemWidgetGeneration,
+        CancellationToken cancellationToken);
+    
+    Task<Hold> MakeHold(Hold hold,
         CancellationToken cancellationToken);
 
     Task<bool> CaptureHold(Hold hold, 

@@ -1,7 +1,9 @@
+using System.Data;
 using System.Reflection;
 using Barion.Balance.Application.Common.Interfaces;
 using Barion.Balance.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Barion.Balance.Infrastructure.Data;
 
@@ -17,6 +19,12 @@ public class BalanceDbContext : DbContext, IBalanceDbContext
     public async Task MigrateDatabase()
     {
         await Database.MigrateAsync();
+    }
+
+    public Task<IDbContextTransaction> BeginTransactionAsync(IsolationLevel isolationLevel = IsolationLevel.ReadCommitted,
+        CancellationToken token = default)
+    {
+        return Database.BeginTransactionAsync(isolationLevel, token);
     }
 
 

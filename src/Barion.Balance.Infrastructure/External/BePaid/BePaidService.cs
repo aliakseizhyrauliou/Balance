@@ -1,9 +1,9 @@
 using System.Text;
 using Barion.Balance.Application.Common.Repositories;
 using Barion.Balance.Domain.Entities;
+using Barion.Balance.Domain.Enums;
 using Barion.Balance.Domain.Services;
-using Barion.Balance.Domain.Services.Models;
-using Barion.Balance.Infrastructure.External.BePaid.BePaidModels;
+using Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Checkout.Response;
 using Newtonsoft.Json;
 
 namespace Barion.Balance.Infrastructure.External.BePaid;
@@ -15,10 +15,38 @@ public class BePaidService(IHoldRepository holdRepository,
     : IPaymentSystemService
 {
     private const string PaymentSystemName = "BePaid";
-    public Task<Hold> MakeHold(MakeHold makeHold, 
-        PaymentSystemConfiguration paymentSystemConfiguration,
+
+    public async Task<string> GeneratePaymentSystemWidget(PaymentSystemWidgetGeneration paymentSystemWidgetGeneration,
         CancellationToken cancellationToken)
     {
+        return paymentSystemWidgetGeneration.WidgetReason switch
+        {
+            WidgetReason.CreatePaymentMethod => await GenerateAuthorizationWidgetUrl(paymentSystemWidgetGeneration, cancellationToken),
+            WidgetReason.Payment => throw new NotImplementedException(),
+            _ => throw new ArgumentOutOfRangeException()
+        };
+    }
+
+    private async Task<string> GenerateAuthorizationWidgetUrl(PaymentSystemWidgetGeneration paymentSystemWidgetGeneration, 
+        CancellationToken cancellationToken)
+    {
+        var configuration = await GetBePaidConfiguration();
+        
+        var modelForSending = BePaidModelBuilder
+            .BuildForAuthorizationWithWidget(configuration, paymentSystemWidgetGeneration);
+        
+        var httpMessage = BuildHttpRequestMessage(modelForSending, HttpMethod.Post, configuration.Urls.CheckoutUrl.Url);
+
+        var sendResult = await SendMessageAndCast<CheckoutResponse>(httpMessage, cancellationToken);
+
+        return sendResult.RedirectUrl;
+
+    }
+
+    public Task<Hold> MakeHold(Hold makeHold, 
+        CancellationToken cancellationToken)
+    {
+        
         throw new NotImplementedException();
     }
 
@@ -32,29 +60,24 @@ public class BePaidService(IHoldRepository holdRepository,
         throw new NotImplementedException();
     }
     
-    private async Task<CheckouRootDto> GenerateAuthorizationWidgetUrl(MakeHold hold)
-    {
-        var configuration = await GetBePaidConfiguration();
-        
-        var modelForSending = BePaidModelBuilder.BuildForAuthorizationWithWidget(configuration, hold.PaymentMethodId);
-
-        var httpMessage = BuildHttpRequestMessage(modelForSending, HttpMethod.Post, configuration.Urls.CheckoutUrl.Url);
-
-        var apiResponse = await httpClient.SendAsync(httpMessage);
-        
-        var apiContent = await apiResponse.Content.ReadAsStringAsync();
-
-        var apiResponseDto = JsonConvert.DeserializeObject<CheckouRootDto>(apiContent);
-        
-        return apiResponseDto;
-
-    }
 
     private async Task<BePaidConfiguration> GetBePaidConfiguration()
     {
         var configurationModel = await configurationService.GetPaymentSystemConfiguration(PaymentSystemName);
 
         return BePaidConfigurationDeserializationHelper.DeserializeToBePaidConfiguration(configurationModel);
+    }
+
+    private async Task<T?> SendMessageAndCast<T>(HttpRequestMessage requestMessage, 
+        CancellationToken cancellationToken)
+    {
+        var apiResponse = await httpClient.SendAsync(requestMessage, cancellationToken);
+        
+        var apiContent = await apiResponse.Content.ReadAsStringAsync(cancellationToken);
+
+        var apiResponseDto = JsonConvert.DeserializeObject<T>(apiContent);
+        
+        return apiResponseDto;
     }
 
     private HttpRequestMessage BuildHttpRequestMessage(object data, 

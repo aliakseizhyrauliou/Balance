@@ -25,7 +25,7 @@ public sealed class DeletePaymentMethodCommandHandler(IPaymentMethodRepository r
 
         if (!IsUserOwnPaymentMethod(paymentMethod, request))
         {
-            throw new Exception("user_doesnt_own_this_payment_method");
+            throw new ForbiddenAccessException("user_doesnt_own_this_payment_method");
         }
 
         await repository.DeleteAsync(paymentMethod, cancellationToken);

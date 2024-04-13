@@ -1,6 +1,3 @@
 namespace Barion.Balance.Application.Common.Exceptions;
 
-public class ForbiddenAccessException : Exception
-{
-    public ForbiddenAccessException() : base() { }
-}
+public class ForbiddenAccessException(string message) : Exception(message);

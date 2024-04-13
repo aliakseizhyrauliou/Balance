@@ -1,8 +1,10 @@
+using System.Data;
 using System.Linq.Expressions;
 using Barion.Balance.Application.Common.Interfaces;
 using Barion.Balance.Application.Common.Repositories;
 using Barion.Balance.Domain.Common;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Barion.Balance.Infrastructure.Data.Repositories;
 
@@ -16,6 +18,12 @@ public class BaseRepository<TEntity>
     {
         _context = context;
         dbSet = _context.Set<TEntity>();
+    }
+
+    public Task<IDbContextTransaction> BeginTransaction(IsolationLevel isolationLevel = IsolationLevel.ReadCommitted, 
+        CancellationToken token = default)
+    {
+        return _context.BeginTransactionAsync(isolationLevel, token);
     }
 
     public async Task InsertAsync(TEntity entity, CancellationToken cancellationToken = default)

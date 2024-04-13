@@ -1,3 +1,4 @@
+using System.Data;
 using Barion.Balance.Application.Common.Exceptions;
 using Barion.Balance.Application.Common.Interfaces;
 using Barion.Balance.Application.Common.Repositories;
@@ -28,15 +29,28 @@ public sealed class SelectPaymentMethodCommandHandler(IPaymentMethodRepository r
 
         if (!IsUserOwnPaymentMethod(paymentMethod, request))
         {
-            throw new Exception("user_doesnt_own_this_payment_method");
+            throw new ForbiddenAccessException("user_doesnt_own_this_payment_method");
         }
-        
-        await repository.UnselectAllPaymentMethodsAsync(request.UserId, cancellationToken);
 
-        await SelectPaymentMethod(paymentMethod, cancellationToken);
+        await using var transaction =
+            await repository.BeginTransaction(IsolationLevel.ReadCommitted, cancellationToken);
+
+        try
+        {
+            await repository.UnselectAllPaymentMethodsAsync(request.UserId, cancellationToken);
+
+            await SelectPaymentMethod(paymentMethod, cancellationToken);
+
+            await transaction.CommitAsync(cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
     }
 
-    private bool IsUserOwnPaymentMethod(PaymentMethod paymentMethod, 
+    private static bool IsUserOwnPaymentMethod(PaymentMethod paymentMethod, 
         SelectPaymentMethodCommand request)
     {
         return paymentMethod.UserId.Equals(request.UserId);
