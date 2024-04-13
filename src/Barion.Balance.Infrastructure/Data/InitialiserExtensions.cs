@@ -67,6 +67,44 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
 
         var bePaidConfiguration = new BePaidConfiguration()
         {
+            Urls = new Urls()
+            {
+                CheckoutUrl = new Urls.UrlWithDescription()
+                {
+                    Url = "https://checkout.bepaid.by/ctp/api/checkouts",
+                    Description = "Адрес для создания платежного виджета"
+                },
+                NotificationUrl = new Urls.UrlWithDescription()
+                {
+                    Url = "https://charger.barion-ev.by/api/BePaid/VerifyPaymentMethodNotification",
+                    Description = "Веб-хук адрес, куда будет делать запрос платежная система"
+                },
+                RefundUrl = new Urls.UrlWithDescription()
+                {
+                    Url = "https://gateway.bepaid.by/transactions/refunds",
+                    Description = "Адрес для возврата средств"
+                },
+                AuthorizationUrl = new Urls.UrlWithDescription()
+                {
+                    Url = "https://gateway.bepaid.by/transactions/authorizations",
+                    Description = "Адрес для созания холда"
+                },
+                PaymentUrl = new Urls.UrlWithDescription()
+                {
+                    Url = "https://gateway.bepaid.by/transactions/payments",
+                    Description = "Адрес для создания платежа"
+                },
+                CaptureHoldUrl = new Urls.UrlWithDescription()
+                {
+                    Url = "https://gateway.bepaid.by/transactions/captures",
+                    Description = "Адрес для фиксирования холда"
+                },
+                VoidHold = new Urls.UrlWithDescription()
+                {
+                    Url = "https://gateway.bepaid.by/transactions/voids",
+                    Description = "Адрес для отмены холда"
+                }
+            },
             GenerateCardToken = new GenerateCardToken()
             {
                 IsTest = true,
@@ -76,7 +114,6 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
                 {
                     DefaultButtonText = "Привязать карту",
                     DefaultLanguage = "ru",
-                    NotificationUrl = "http://google.com",
                 },
                 Order = new GenerateCardToken.GenerateCardTokenOrder()
                 {

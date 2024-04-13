@@ -2,7 +2,26 @@ namespace Barion.Balance.Infrastructure.External.BePaid;
 
 public class BePaidConfiguration
 {
+    public Urls Urls { get; set; } = null!;
     public GenerateCardToken GenerateCardToken { get; set; } = null!;
+}
+
+
+public sealed class Urls
+{
+    public UrlWithDescription CheckoutUrl { get; set; }
+    public UrlWithDescription NotificationUrl { get; set; }
+    public UrlWithDescription RefundUrl { get; set; }
+    public UrlWithDescription AuthorizationUrl { get; set; }
+    public UrlWithDescription PaymentUrl { get; set; }
+    public UrlWithDescription CaptureHoldUrl { get; set; }
+    public UrlWithDescription VoidHold { get; set; }
+
+    public class UrlWithDescription
+    {
+        public string? Description { get; set; }
+        public required string Url { get; set; }
+    }
 }
 
 /// <summary>
@@ -22,7 +41,6 @@ public class GenerateCardToken
     {
         public string DefaultButtonText { get; set; } = null!;
         public string DefaultLanguage { get; set; } = null!;
-        public string NotificationUrl { get; set; } = null!;
     }
     
     public class GenerateCardTokenOrder
@@ -40,6 +58,7 @@ public class GenerateCardToken
         }
     }
 }
+
 
 
 

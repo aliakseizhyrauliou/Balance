@@ -1,12 +1,15 @@
+using System.Text;
 using Barion.Balance.Application.Common.Repositories;
 using Barion.Balance.Domain.Entities;
 using Barion.Balance.Domain.Services;
 using Barion.Balance.Domain.Services.Models;
 using Barion.Balance.Infrastructure.External.BePaid.BePaidModels;
+using Newtonsoft.Json;
 
 namespace Barion.Balance.Infrastructure.External.BePaid;
 
 public class BePaidService(IHoldRepository holdRepository,
+    IPaymentSystemAuthorizationService paymentSystemAuthorizationService,
     BePaidConfigurationService configurationService,
     HttpClient httpClient) 
     : IPaymentSystemService
@@ -29,46 +32,22 @@ public class BePaidService(IHoldRepository holdRepository,
         throw new NotImplementedException();
     }
     
-    private async Task<CheckouRootDto> BuildCheckoutRootDto(MakeHold hold)
+    private async Task<CheckouRootDto> GenerateAuthorizationWidgetUrl(MakeHold hold)
     {
         var configuration = await GetBePaidConfiguration();
         
-        return new CheckouRootDto()
-        {
-            Checkout = new CheckoutDto()
-            {
-                Test = configuration.GenerateCardToken.IsTest,
-                TransactionType = configuration.GenerateCardToken.TransactionType,
-                Attempts = configuration.GenerateCardToken.AttemptsCount,
-                Settings = new SettingsDto()
-                {
-                    ButtonText = configuration.GenerateCardToken.Settings.DefaultButtonText,
-                    Language = configuration.GenerateCardToken.Settings.DefaultLanguage,
-                    NotificationUrl = configuration.GenerateCardToken.Settings.NotificationUrl,
-                    CustomerFields = new CustomerFieldsDto()
-                    {
-                        Visible = ["first_name", "last_name"],
-                        ReadOnly = ["email"]
-                    },
-                    CreditCardFields = new CreditCardFieldsDto()
-                    {
-                        Holder = "Test test",
-                        ReadOnly = ["holder"]
-                    }
-                },
-                Order = new OrderDto()
-                {
-                    Currency = configuration.GenerateCardToken.Order.DefaultCurrency,
-                    Amount = configuration.GenerateCardToken.Order.DefaultAmount,
-                    Description = configuration.GenerateCardToken.Order.DefaultDescription,
-                    TrackingId = hold.PaymentMethodId.ToString(),
-                    AdditionalData = new AdditionalDataDto()    
-                    {
-                        Contract = configuration.GenerateCardToken.Order.AdditionalData.Contract
-                    },
-                },
-            }
-        };
+        var modelForSending = BePaidModelBuilder.BuildForAuthorizationWithWidget(configuration, hold.PaymentMethodId);
+
+        var httpMessage = BuildHttpRequestMessage(modelForSending, HttpMethod.Post, configuration.Urls.CheckoutUrl.Url);
+
+        var apiResponse = await httpClient.SendAsync(httpMessage);
+        
+        var apiContent = await apiResponse.Content.ReadAsStringAsync();
+
+        var apiResponseDto = JsonConvert.DeserializeObject<CheckouRootDto>(apiContent);
+        
+        return apiResponseDto;
+
     }
 
     private async Task<BePaidConfiguration> GetBePaidConfiguration()
@@ -76,6 +55,26 @@ public class BePaidService(IHoldRepository holdRepository,
         var configurationModel = await configurationService.GetPaymentSystemConfiguration(PaymentSystemName);
 
         return BePaidConfigurationDeserializationHelper.DeserializeToBePaidConfiguration(configurationModel);
+    }
+
+    private HttpRequestMessage BuildHttpRequestMessage(object data, 
+        HttpMethod httpMethod,
+        string requestUrl)
+    {
+        var message = new HttpRequestMessage()
+        {
+            RequestUri = new Uri(requestUrl),
+            Method = httpMethod
+        };
+
+        paymentSystemAuthorizationService.Authorize(message);
+
+        var json = JsonConvert.SerializeObject(data);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        message.Content = content;
+
+        return message;
     }
 
 }
