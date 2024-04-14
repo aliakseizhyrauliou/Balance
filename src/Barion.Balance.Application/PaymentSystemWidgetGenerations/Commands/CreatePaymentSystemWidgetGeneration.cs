@@ -5,6 +5,7 @@ using Barion.Balance.Domain.Enums;
 using Barion.Balance.Domain.Events.PaymentSystemWidgetGenerations;
 using Barion.Balance.Domain.Services;
 using MediatR;
+using System.Transactions;
 
 namespace Barion.Balance.Application.PaymentSystemWidgetGenerations.Commands;
 
@@ -30,39 +31,42 @@ public sealed class CreatePaymentSystemWidgetGenerationCommandHandler(
 
         //Создам модель, которая отражет причину открытия виджета платежной системы
 
-        var paymentSystemWidgetGeneration = new PaymentSystemWidgetGeneration
+        var paymentSystemWidgetGeneration = BuildPaymentSystemWidgetGeneration(currentPaymentSchemaConfiguration.Id);
+
+
+        paymentSystemWidgetGeneration.AddDomainEvent(new PaymentSystemWidgetGenerationCreatedEvent(paymentSystemWidgetGeneration));
+
+        await using var transaction = await paymentSystemWidgetGenerationRepository.BeginTransaction(IsolationLevel.ReadCommitted, cancellationToken);
+
+        try
+        {
+            await paymentSystemWidgetGenerationRepository.DisableAllUserWidgetsAsync(paymentSystemWidgetGeneration.UserId, cancellationToken);
+            await paymentSystemWidgetGenerationRepository.InsertAsync(paymentSystemWidgetGeneration, cancellationToken);
+
+            var url = await paymentSystemService.GeneratePaymentSystemWidget(paymentSystemWidgetGeneration, cancellationToken);
+
+            paymentSystemWidgetGeneration.Url = url;
+            paymentSystemWidgetGeneration.IsSuccess = true;
+
+            await paymentSystemWidgetGenerationRepository.UpdateAsync(paymentSystemWidgetGeneration, cancellationToken);
+
+            await transaction.CommitAsync(cancellationToken);
+        }
+        catch (Exception ex) 
+        {
+            await transaction.RollbackAsync(cancellationToken);
+        }
+    }
+
+    private PaymentSystemWidgetGeneration BuildPaymentSystemWidgetGeneration(int currentPaymentSystemConfiguration)  
+    {
+        return new PaymentSystemWidgetGeneration
         {
             UserId = currentUserData.Id,
             FirstName = currentUserData.FirstName,
             LastName = currentUserData.LastName,
             WidgetReason = WidgetReason.CreatePaymentMethod,
-            PaymentSystemConfigurationId = currentPaymentSchemaConfiguration.Id,
+            PaymentSystemConfigurationId = currentPaymentSystemConfiguration
         };
-        
-        paymentSystemWidgetGeneration.AddDomainEvent(new PaymentSystemWidgetGenerationCreatedEvent(paymentSystemWidgetGeneration));
-        
-        await paymentSystemWidgetGenerationRepository.InsertAsync(paymentSystemWidgetGeneration,
-            cancellationToken);
-
-        
-        //TODO
-        paymentSystemWidgetGeneration.TrackingId = paymentSystemWidgetGeneration.Id;
-
-        try
-        {
-            var url = await paymentSystemService.GeneratePaymentSystemWidget(paymentSystemWidgetGeneration,
-                cancellationToken);
-
-            paymentSystemWidgetGeneration.Url = url;
-            paymentSystemWidgetGeneration.IsSuccess = true;
-        }
-        catch (Exception ex)
-        {
-            paymentSystemWidgetGeneration.IsSuccess = false;
-        }
-        finally
-        {
-            await paymentSystemWidgetGenerationRepository.UpdateAsync(paymentSystemWidgetGeneration, cancellationToken);
-        }
     }
 }
