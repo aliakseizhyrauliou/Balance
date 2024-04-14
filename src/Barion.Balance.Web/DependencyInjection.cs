@@ -18,8 +18,9 @@ public static class DependencyInjection
 
         services.AddExceptionHandler<CustomExceptionHandler>();
         
-        services.AddScoped<IUser, CurrentUser>();
-
+        services.AddScoped<IUser, CurrentUserMock>();
+        services.AddHttpClient();
+        
         services.AddHttpContextAccessor();
 
         // Customise default API behaviour

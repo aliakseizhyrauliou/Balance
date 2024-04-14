@@ -11,6 +11,7 @@ public interface IBalanceDbContext
     DbSet<AccountRecord> AccountRecords { get; set; }
     DbSet<Hold> Holds { get; set; }
     DbSet<PaymentSystemConfiguration> PaymentSystemConfigurations { get; set; }
+    DbSet<PaymentSystemWidgetGeneration> PaymentSystemWidgetGenerations { get; set; }
 
     public Task MigrateDatabase();
     public int SaveChanges();

@@ -1,9 +1,8 @@
 using Barion.Balance.Application.Common.Repositories;
 using Barion.Balance.Domain.Entities;
 using Barion.Balance.Domain.Services;
-using Newtonsoft.Json;
 
-namespace Barion.Balance.Infrastructure.External.BePaid;
+namespace Barion.Balance.Infrastructure.External.BePaid.Services;
 
 public class BePaidConfigurationService(IPaymentSystemConfigurationRepository repository) 
     : IPaymentSystemConfigurationService

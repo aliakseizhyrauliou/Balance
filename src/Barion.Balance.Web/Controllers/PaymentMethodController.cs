@@ -1,5 +1,6 @@
 using Barion.Balance.Application.PaymentMethods.Commands;
 using Barion.Balance.Application.PaymentMethods.Queries;
+using Barion.Balance.Application.PaymentSystemWidgetGenerations.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,10 +13,9 @@ public class PaymentMethodController(ISender sender, IMediator mediator)
     : MediatrController(sender, mediator)
 {
     [HttpPost("create")]
-    public async Task<PaymentMethodDto> Create([FromBody] CreatePaymentMethodCommand command,
-        CancellationToken cancellationToken)
+    public async Task Create(CancellationToken cancellationToken)
     {
-        return await _sender.Send(command, cancellationToken);
+        await _sender.Send(new CreatePaymentSystemWidgetGenerationCommand(), cancellationToken);
     }
     
     [HttpGet("getById")]

@@ -16,6 +16,8 @@ public class BalanceDbContext : DbContext, IBalanceDbContext
     public DbSet<AccountRecord> AccountRecords { get; set; }
     public DbSet<Hold> Holds { get; set; }
     public DbSet<PaymentSystemConfiguration> PaymentSystemConfigurations { get; set; }
+    public DbSet<PaymentSystemWidgetGeneration> PaymentSystemWidgetGenerations { get; set; }
+
     public async Task MigrateDatabase()
     {
         await Database.MigrateAsync();

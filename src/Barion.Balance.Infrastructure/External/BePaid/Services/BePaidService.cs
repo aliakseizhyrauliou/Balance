@@ -4,13 +4,15 @@ using Barion.Balance.Domain.Entities;
 using Barion.Balance.Domain.Enums;
 using Barion.Balance.Domain.Services;
 using Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Checkout.Response;
+using Barion.Balance.Infrastructure.External.BePaid.Configuration;
+using Barion.Balance.Infrastructure.External.BePaid.Helpers;
 using Newtonsoft.Json;
 
-namespace Barion.Balance.Infrastructure.External.BePaid;
+namespace Barion.Balance.Infrastructure.External.BePaid.Services;
 
 public class BePaidService(IHoldRepository holdRepository,
     IPaymentSystemAuthorizationService paymentSystemAuthorizationService,
-    BePaidConfigurationService configurationService,
+    IPaymentSystemConfigurationService configurationService,
     HttpClient httpClient) 
     : IPaymentSystemService
 {
@@ -32,14 +34,14 @@ public class BePaidService(IHoldRepository holdRepository,
     {
         var configuration = await GetBePaidConfiguration();
         
-        var modelForSending = BePaidModelBuilder
+        var modelForSending = BePaidModelBuilderHelper
             .BuildForAuthorizationWithWidget(configuration, paymentSystemWidgetGeneration);
         
         var httpMessage = BuildHttpRequestMessage(modelForSending, HttpMethod.Post, configuration.Urls.CheckoutUrl.Url);
 
-        var sendResult = await SendMessageAndCast<CheckoutResponse>(httpMessage, cancellationToken);
+        var sendResult = await SendMessageAndCast<CheckoutResponseRoot>(httpMessage, cancellationToken);
 
-        return sendResult.RedirectUrl;
+        return sendResult.CheckoutResponse.RedirectUrl;
 
     }
 
@@ -72,7 +74,7 @@ public class BePaidService(IHoldRepository holdRepository,
         CancellationToken cancellationToken)
     {
         var apiResponse = await httpClient.SendAsync(requestMessage, cancellationToken);
-        
+
         var apiContent = await apiResponse.Content.ReadAsStringAsync(cancellationToken);
 
         var apiResponseDto = JsonConvert.DeserializeObject<T>(apiContent);

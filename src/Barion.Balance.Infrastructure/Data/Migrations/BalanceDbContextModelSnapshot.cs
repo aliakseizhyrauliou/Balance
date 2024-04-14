@@ -231,6 +231,9 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("jsonb");
 
+                    b.Property<bool>("IsCurrentSchema")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
@@ -247,6 +250,90 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PaymentSystemConfigurations");
+                });
+
+            modelBuilder.Entity("Barion.Balance.Domain.Entities.PaymentSystemWidgetGeneration", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTimeOffset>("Created")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDisabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsSuccess")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset>("LastModified")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("PaymentSystemConfigurationId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Token")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("TrackingId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.Property<int>("WidgetReason")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PaymentSystemConfigurationId");
+
+                    b.ToTable("PaymentSystemWidgetGenerations");
+                });
+
+            modelBuilder.Entity("Barion.Balance.Domain.Entities.PaymentSystemWidgetGeneration", b =>
+                {
+                    b.HasOne("Barion.Balance.Domain.Entities.PaymentSystemConfiguration", "PaymentSystemConfiguration")
+                        .WithMany("PaymentSystemWidgetGenerations")
+                        .HasForeignKey("PaymentSystemConfigurationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PaymentSystemConfiguration");
+                });
+
+            modelBuilder.Entity("Barion.Balance.Domain.Entities.PaymentSystemConfiguration", b =>
+                {
+                    b.Navigation("PaymentSystemWidgetGenerations");
                 });
 #pragma warning restore 612, 618
         }

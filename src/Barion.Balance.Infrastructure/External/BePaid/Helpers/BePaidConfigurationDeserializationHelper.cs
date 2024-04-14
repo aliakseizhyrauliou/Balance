@@ -1,7 +1,8 @@
 using Barion.Balance.Domain.Entities;
+using Barion.Balance.Infrastructure.External.BePaid.Configuration;
 using Newtonsoft.Json;
 
-namespace Barion.Balance.Infrastructure.External.BePaid;
+namespace Barion.Balance.Infrastructure.External.BePaid.Helpers;
 
 public static class BePaidConfigurationDeserializationHelper
 {

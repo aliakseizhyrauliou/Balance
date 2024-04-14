@@ -1,6 +1,8 @@
 using Barion.Balance.Domain.Entities;
 using Barion.Balance.Domain.Services;
 using Barion.Balance.Infrastructure.External.BePaid;
+using Barion.Balance.Infrastructure.External.BePaid.Configuration;
+using Barion.Balance.Infrastructure.External.BePaid.Helpers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

@@ -20,7 +20,7 @@ public class Checkout
     [JsonProperty(PropertyName = "order")]
     public required Order.Order Order { get; set; }
 
-    [JsonPropertyName("settings")] 
+    [JsonProperty(PropertyName = "settings")] 
     public required Settings.Settings Settings { get; set; }
 
     [JsonProperty(PropertyName = "customer")]

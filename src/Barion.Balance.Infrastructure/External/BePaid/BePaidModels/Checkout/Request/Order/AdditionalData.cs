@@ -8,6 +8,6 @@ public class AdditionalData
     [JsonProperty(PropertyName = "contract")]
     public required List<string>? Contract { get; set; }
 
-    [JsonPropertyName("receipt_text")]
+    [JsonProperty(PropertyName = "receipt_text")]
     public required List<string> ReceiptText { get; set; }
 }

@@ -1,12 +1,16 @@
 using Barion.Balance.Application.Common.Interfaces;
 using Barion.Balance.Domain.Entities;
-using Barion.Balance.Infrastructure.External.BePaid;
+using Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Checkout.Request;
+using Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Checkout.Request.Customer;
+using Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Checkout.Request.Order;
+using Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Checkout.Request.Settings;
+using Barion.Balance.Infrastructure.External.BePaid.Configuration;
 using Barion.Balance.Infrastructure.External.BePaid.Enums;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using PaymentMethod = Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Checkout.Request.PaymentMethod.PaymentMethod;
 
 namespace Barion.Balance.Infrastructure.Data;
 
@@ -105,25 +109,51 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
                     Description = "Адрес для отмены холда"
                 }
             },
-            GenerateCardToken = new GenerateCardToken()
+            CheckoutAuthorization = new Checkout
             {
-                IsTest = true,
+                Attempts = 1,
                 TransactionType = TransactionTypes.Authorization,
-                AttemptsCount = 1,
-                Settings = new GenerateCardToken.GenerateCardTokenSettings()
+                Settings = new Settings
                 {
-                    DefaultButtonText = "Привязать карту",
-                    DefaultLanguage = "ru",
-                },
-                Order = new GenerateCardToken.GenerateCardTokenOrder()
-                {
-                    DefaultCurrency = "BYN",
-                    DefaultAmount = 0,
-                    DefaultDescription = "Проверка карты",
-                    AdditionalData = new GenerateCardToken.GenerateCardTokenOrder.GenerateCardTokenAdditionalData()
+                    ButtonText = "Привязать карту",
+                    Language = "RU",
+                    NotificationUrl = "https://google.com",
+                    SaveCardToggle = new SaveCardToggle
                     {
-                        Contract = new List<string>() { "recurring" }
+                        Display = true,
+                        CustomerContract = true
+                    },
+                    CustomerFields = new CustomerFields
+                    {
+                        Visible = ["email", "first_name", "last_name"],
+                        ReadOnly = ["first_name", "last_name"]
                     }
+                },
+                
+                
+                Order = new Order
+                {
+                    Currency = "BYN",
+                    Amount = 0,
+                    Description = "Продолжите для привязки карты к системe Barion",
+                    AdditionalData = new AdditionalData
+                    {
+                        Contract = ["recurring", "card_on_file"],
+                        ReceiptText = ["Карта успешно привязана к системе Barion"]
+                    },
+                    
+                    TrackingId = null
+                },
+                
+                Test = true,
+                PaymentMethod = new PaymentMethod
+                {
+                    ExcludedTypes = ["erip", "halva"]
+                },
+                Customer = new Customer
+                {
+                    FirstName = "Default FirstName",
+                    LastName = "Default LastName"
                 }
             }
         };
@@ -131,6 +161,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         var configurationModel = new PaymentSystemConfiguration()
         {
             PaymentSystemName = "BePaid",
+            IsCurrentSchema = true,
             Data = JsonConvert.SerializeObject(bePaidConfiguration)
         };
 

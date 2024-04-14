@@ -14,4 +14,6 @@ public class PaymentSystemConfiguration : BaseAuditableEntity
     /// Информация об открытии виджета в платежной системе
     /// </summary>
     public ICollection<PaymentSystemWidgetGeneration>? PaymentSystemWidgetGenerations { get; set; }
+
+    public bool IsCurrentSchema { get; set; }
 }
