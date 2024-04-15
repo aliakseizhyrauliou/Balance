@@ -5,7 +5,7 @@ using Barion.Balance.Domain.Enums;
 using Barion.Balance.Domain.Events.PaymentSystemWidgetGenerations;
 using Barion.Balance.Domain.Services;
 using MediatR;
-using System.Transactions;
+using System.Data;
 
 namespace Barion.Balance.Application.PaymentSystemWidgetGenerations.Commands;
 

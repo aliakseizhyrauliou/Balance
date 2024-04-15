@@ -29,5 +29,10 @@ namespace Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Transaction
 
         [JsonProperty(PropertyName = "payment_method_type")]
         public required string PaymentMethodType {  get; set; }
+
+        [JsonProperty(PropertyName = "credit_card")]
+        public CreditCard.CreditCard CreditCard { get; set; }
+
+
     }
 }

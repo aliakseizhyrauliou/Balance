@@ -49,5 +49,11 @@ public class PaymentMethodController(ISender sender, IMediator mediator)
     {
         await _mediator.Send(query, cancellationToken);
     }
+
+    [HttpGet("list")]
+    public async Task<List<PaymentMethodDto>> List(CancellationToken cancellationToken)
+    {
+        return await _mediator.Send(new GetPaymentMethodsListQuery(), cancellationToken);
+    }
 }
 

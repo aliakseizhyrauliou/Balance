@@ -42,7 +42,7 @@ public static class BePaidModelBuilderHelper
                     Currency = configuration.CheckoutAuthorization.Order.Currency,
                     Amount = configuration.CheckoutAuthorization.Order.Amount,
                     Description = configuration.CheckoutAuthorization.Order.Description,
-                    TrackingId = paymentSystemWidgetGeneration.TrackingId.ToString()!,
+                    TrackingId = paymentSystemWidgetGeneration.Id.ToString()!,
                     AdditionalData = new AdditionalData()
                     {
                         ReceiptText = configuration.CheckoutAuthorization.Order.AdditionalData.ReceiptText,

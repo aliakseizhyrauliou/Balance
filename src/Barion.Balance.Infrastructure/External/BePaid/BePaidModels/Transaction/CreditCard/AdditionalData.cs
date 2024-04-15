@@ -6,7 +6,5 @@ using System.Threading.Tasks;
 
 namespace Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Transaction.CreditCard
 {
-    public  class AdditionalData
-    {
-    }
+
 }

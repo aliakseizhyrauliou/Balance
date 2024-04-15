@@ -1,10 +1,10 @@
-using System.Data;
 using Barion.Balance.Application.Common.Exceptions;
 using Barion.Balance.Application.Common.Interfaces;
 using Barion.Balance.Application.Common.Repositories;
 using Barion.Balance.Domain.Entities;
 using Barion.Balance.Domain.Events.PaymentMethods;
 using MediatR;
+using System.Data;
 
 namespace Barion.Balance.Application.PaymentMethods.Commands;
 

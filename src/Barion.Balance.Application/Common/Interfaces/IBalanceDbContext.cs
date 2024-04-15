@@ -1,7 +1,7 @@
-using System.Data;
 using Barion.Balance.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using System.Data;
 
 namespace Barion.Balance.Application.Common.Interfaces;
 

@@ -1,8 +1,9 @@
+using System.Data;
 using System.Linq.Expressions;
-using System.Transactions;
 using Barion.Balance.Application.Common.Interfaces;
 using Barion.Balance.Application.Common.Repositories;
 using Barion.Balance.Domain.Common;
+using Barion.Balance.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 

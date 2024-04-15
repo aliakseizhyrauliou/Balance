@@ -1,9 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Transaction.CreditCard
 {
@@ -22,7 +17,7 @@ namespace Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Transaction
         public required string Last4 { get; set; }
 
         [JsonProperty(PropertyName = "first_1")]
-        public required string Last1 { get; set; }
+        public required string First1 { get; set; }
 
         /// <summary>
         /// Шестизначный банковский идентификационный номер. Первые 6 цифр номера карты.
@@ -60,6 +55,7 @@ namespace Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Transaction
         /// <summary>
         /// Токен карты. Позволяет сохранять данные покупателей и производить оплату, когда они делают покупку или вы возобновляете свои услуги.
         /// </summary>
+        [JsonProperty(PropertyName = "token")]
         public required string Token { get; set; }
 
         /// <summary>
@@ -73,5 +69,12 @@ namespace Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Transaction
         /// </summary>
         [JsonProperty(PropertyName = "receipt_url")]
         public required string ReceiptUrl { get; set; }
+
+
+        [JsonProperty(PropertyName = "exp_month")]
+        public required int ExpMonth { get; set; }
+
+        [JsonProperty(PropertyName = "exp_year")]
+        public int ExpYear { get; set; }
     }
 }

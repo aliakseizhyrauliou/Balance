@@ -117,7 +117,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
                 {
                     ButtonText = "Привязать карту",
                     Language = "RU",
-                    NotificationUrl = "https://google.com",
+                    NotificationUrl = "https://124e-185-158-216-97.ngrok-free.app/api/BePaid/verifyPaymentMethodNotification",
                     SaveCardToggle = new SaveCardToggle
                     {
                         Display = true,
