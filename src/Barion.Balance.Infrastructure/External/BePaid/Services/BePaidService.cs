@@ -4,6 +4,7 @@ using Barion.Balance.Domain.Enums;
 using Barion.Balance.Domain.Exceptions;
 using Barion.Balance.Domain.Services;
 using Barion.Balance.Domain.Services.ServiceResponses;
+using Barion.Balance.Infrastructure.External.BePaid.BePaidModels;
 using Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Checkout.Response;
 using Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Transaction;
 using Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Transaction.TransactionStatus;
@@ -56,20 +57,31 @@ public class BePaidService(IPaymentSystemAuthorizationService paymentSystemAutho
             _ => throw new NotImplementedException()
         };
     }
-    
-    public async Task<ProcessHoldPaymentSystemResult> ProcessHoldPaymentSystemResponse(
+
+    private async Task<ProcessHoldPaymentSystemResult> ProcessHoldPaymentSystemResponse(
         Hold hold,
         TransactionRoot transaction,
         CancellationToken cancellationToken = default)
     {
-        return transaction!.Transaction.Status switch
+        return transaction.Transaction.Status switch
         {
             TransactionStatus.Successful => ProcessSuccessfulHoldStatus(
+                transaction, hold),
+            TransactionStatus.Failed => ProcessFailedHoldStatus(
                 transaction, hold),
             _ => throw new NotImplementedException()
         };
     }
 
+    private ProcessHoldPaymentSystemResult ProcessFailedHoldStatus(TransactionRoot transaction, Hold hold)
+    {
+        return new ProcessHoldPaymentSystemResult
+        {
+            IsOk = false,
+            ErrorMessage = transaction.Transaction.Message,
+            FriendlyErrorMessage = transaction.Transaction.Message
+        };
+    }
     private ProcessHoldPaymentSystemResult ProcessSuccessfulHoldStatus(TransactionRoot transaction, Hold hold)
     {
         hold.PaymentSystemTransactionId = transaction.Transaction.Id;
@@ -171,18 +183,14 @@ public class BePaidService(IPaymentSystemAuthorizationService paymentSystemAutho
         CancellationToken cancellationToken)
     {
         var apiResponse = await httpClient.SendAsync(requestMessage, cancellationToken);
-
-        try
-        {
-            apiResponse.EnsureSuccessStatusCode();
-        }
-        catch (Exception ex)
-        {
-            throw new PaymentSystemException(ex.Message);
-        }
-
+        
         var apiContent = await apiResponse.Content.ReadAsStringAsync(cancellationToken);
 
+        //TODO
+        /*
+        var test = JsonConvert.DeserializeObject<BePaidErrorRoot>(apiContent);
+        */
+        
         var apiResponseDto = JsonConvert.DeserializeObject<T>(apiContent);
         
         return apiResponseDto;
