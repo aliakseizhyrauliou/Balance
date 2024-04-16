@@ -3,6 +3,9 @@ using Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Checkout.Reques
 using Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Checkout.Request.Customer;
 using Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Checkout.Request.Order;
 using Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Checkout.Request.Settings;
+using Barion.Balance.Infrastructure.External.BePaid.BePaidModels.CreateTransaction;
+using Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Transaction;
+using Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Transaction.CreditCard;
 using Barion.Balance.Infrastructure.External.BePaid.Configuration;
 using PaymentMethod = Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Checkout.Request.PaymentMethod.PaymentMethod;
 
@@ -10,11 +13,34 @@ namespace Barion.Balance.Infrastructure.External.BePaid.Helpers;
 
 public static class BePaidModelBuilderHelper
 {
+    public static CreateTransactionRoot BuildHoldModel(Hold hold,
+        string cardToken,
+        BePaidConfiguration configuration)
+    {
+        return new CreateTransactionRoot
+        {
+            Request = new CreateTransaction
+            {
+                Amount = (int)hold.Amount * 100,
+                Currency = "BYN",
+                Description = "HOLD",
+                TrackingId = hold.Id.ToString(),
+                DuplicateCheck = true,
+                Language = "RU",
+                Test = true,
+                CreditCard = new CreateTransactionCreditCard
+                {
+                    Token = cardToken
+                }
+            }
+        };
+    }
+
     public static CheckoutRoot BuildForAuthorizationWithWidget(
         BePaidConfiguration configuration,
         PaymentSystemWidgetGeneration paymentSystemWidgetGeneration)
     {
-        return new CheckoutRoot()
+        return new CheckoutRoot
         {
             Checkout = new Checkout
             {

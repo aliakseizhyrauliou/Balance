@@ -13,6 +13,7 @@ public interface IPaymentSystemService
         PaymentSystemWidgetGeneration widgetGeneration,
         CancellationToken cancellationToken = default);
     Task<Hold> MakeHold(Hold hold,
+        PaymentMethod paymentMethod,
         CancellationToken cancellationToken);
 
     Task<bool> CaptureHold(Hold hold, 

@@ -1,3 +1,4 @@
+using Barion.Balance.Application.Holds.Commands;
 using Barion.Balance.Domain.Entities;
 using Barion.Balance.Domain.Services;
 using Barion.Balance.Infrastructure.External.BePaid;
@@ -15,9 +16,9 @@ namespace Barion.Balance.Web.Controllers;
 /// <param name="mediator"></param>
 public class HoldController(ISender sender, IMediator mediator, IPaymentSystemConfigurationService configurationService) : MediatrController(sender, mediator)
 {
-    [HttpGet]
-    public async Task<BePaidConfiguration> TestConfig()
-    {
-        return BePaidConfigurationDeserializationHelper.DeserializeToBePaidConfiguration(await configurationService.GetPaymentSystemConfiguration("BePaid"));
+    [HttpPost("hold")]
+    public async Task Hold([FromBody] MakeHoldCommand command, CancellationToken cancellationToken)
+    { 
+        await _mediator.Send(command, cancellationToken);
     }
 }

@@ -33,6 +33,9 @@ namespace Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Transaction
         [JsonProperty(PropertyName = "credit_card")]
         public CreditCard.CreditCard CreditCard { get; set; }
 
+        [JsonProperty(PropertyName = "amount")]
+        public int Amount { get; set; }
+
 
     }
 }

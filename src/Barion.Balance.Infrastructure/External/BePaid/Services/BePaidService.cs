@@ -1,6 +1,7 @@
 using System.Text;
 using Barion.Balance.Domain.Entities;
 using Barion.Balance.Domain.Enums;
+using Barion.Balance.Domain.Exceptions;
 using Barion.Balance.Domain.Services;
 using Barion.Balance.Domain.Services.ServiceResponses;
 using Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Checkout.Response;
@@ -9,6 +10,7 @@ using Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Transaction.Tra
 using Barion.Balance.Infrastructure.External.BePaid.Configuration;
 using Barion.Balance.Infrastructure.External.BePaid.Helpers;
 using Newtonsoft.Json;
+using Exception = System.Exception;
 
 namespace Barion.Balance.Infrastructure.External.BePaid.Services;
 
@@ -107,11 +109,19 @@ public class BePaidService(IPaymentSystemAuthorizationService paymentSystemAutho
 
     }
 
-    public Task<Hold> MakeHold(Hold makeHold, 
+    public async Task<Hold> MakeHold(Hold makeHold, 
+        PaymentMethod paymentMethod,
         CancellationToken cancellationToken)
     {
+        var configuration = await GetBePaidConfiguration();
+
+        var modelForSending = BePaidModelBuilderHelper.BuildHoldModel(makeHold, paymentMethod.PaymentSystemToken, configuration);
+
+        var httpMessage = BuildHttpRequestMessage(modelForSending, HttpMethod.Post, configuration.Urls.AuthorizationUrl.Url);
         
-        throw new NotImplementedException();
+        var sendResult = await SendMessageAndCast<TransactionRoot>(httpMessage, cancellationToken);
+
+        return null;
     }
 
     public Task<bool> CaptureHold(Hold hold, CancellationToken cancellationToken)
@@ -136,6 +146,15 @@ public class BePaidService(IPaymentSystemAuthorizationService paymentSystemAutho
         CancellationToken cancellationToken)
     {
         var apiResponse = await httpClient.SendAsync(requestMessage, cancellationToken);
+
+        /*try
+        {
+            apiResponse.EnsureSuccessStatusCode();
+        }
+        catch (Exception ex)
+        {
+            throw new PaymentSystemException(ex.Message);
+        }*/
 
         var apiContent = await apiResponse.Content.ReadAsStringAsync(cancellationToken);
 
