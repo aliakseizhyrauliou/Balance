@@ -12,7 +12,7 @@ public interface IPaymentSystemService
     Task<ProcessCreatePaymentMethodPaymentSystemWidgetResult> ProcessCreatePaymentMethodPaymentSystemWidgetResponse(string jsonResponse,
         PaymentSystemWidgetGeneration widgetGeneration,
         CancellationToken cancellationToken = default);
-    Task<Hold> MakeHold(Hold hold,
+    Task<ProcessHoldPaymentSystemResult> MakeHold(Hold hold,
         PaymentMethod paymentMethod,
         CancellationToken cancellationToken);
 

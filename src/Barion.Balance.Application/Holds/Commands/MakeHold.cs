@@ -37,7 +37,7 @@ public sealed class MakeHoldCommandHandler(IPaymentSystemService paymentSystemSe
     public async Task<int> Handle(MakeHoldCommand request, 
         CancellationToken cancellationToken)
     {
-        var domainModel = new Hold()
+        var domainModel = new Hold
         {
             UserId = request.UserId,
             PaymentMethodId = request.PaymentMethodId,
@@ -53,9 +53,11 @@ public sealed class MakeHoldCommandHandler(IPaymentSystemService paymentSystemSe
         //Domain слой вообще не должен быть в курсе, что что-то где-то храниться
         var makeHoldRequestToPaymentSystemResult = await paymentSystemService.MakeHold(domainModel, paymentMethod, cancellationToken);
 
-        //А репозиторий может это сделать, это его ответственость
-        await repository.InsertAsync(makeHoldRequestToPaymentSystemResult, cancellationToken);
-        
-        return makeHoldRequestToPaymentSystemResult.Id;
+        if (makeHoldRequestToPaymentSystemResult.IsOk)
+        {
+            await repository.InsertAsync(makeHoldRequestToPaymentSystemResult.Hold, cancellationToken);
+        }
+
+        return makeHoldRequestToPaymentSystemResult.Hold.Id;
     }
 }

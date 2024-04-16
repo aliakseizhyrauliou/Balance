@@ -51,25 +51,25 @@ public static class BePaidModelBuilderHelper
                 {
                     ButtonText = configuration.CheckoutAuthorization.Settings.ButtonText,
                     Language = configuration.CheckoutAuthorization.Settings.Language,
-                    CustomerFields = new CustomerFields()
+                    CustomerFields = new CustomerFields
                     {
                         Visible = configuration.CheckoutAuthorization.Settings.CustomerFields.Visible,
                         ReadOnly = configuration.CheckoutAuthorization.Settings.CustomerFields.ReadOnly
                     },
-                    SaveCardToggle = new SaveCardToggle()
+                    SaveCardToggle = new SaveCardToggle
                     {
                         Display = configuration.CheckoutAuthorization.Settings.SaveCardToggle.Display,
                         CustomerContract = configuration.CheckoutAuthorization.Settings.SaveCardToggle.CustomerContract
                     },
                     NotificationUrl = configuration.CheckoutAuthorization.Settings.NotificationUrl
                 },
-                Order = new Order()
+                Order = new Order
                 {
                     Currency = configuration.CheckoutAuthorization.Order.Currency,
                     Amount = configuration.CheckoutAuthorization.Order.Amount,
                     Description = configuration.CheckoutAuthorization.Order.Description,
                     TrackingId = paymentSystemWidgetGeneration.Id.ToString()!,
-                    AdditionalData = new AdditionalData()
+                    AdditionalData = new AdditionalData
                     {
                         ReceiptText = configuration.CheckoutAuthorization.Order.AdditionalData.ReceiptText,
                         Contract = configuration.CheckoutAuthorization.Order.AdditionalData.Contract,
@@ -83,7 +83,7 @@ public static class BePaidModelBuilderHelper
                 {
                     FirstName = paymentSystemWidgetGeneration.FirstName,
                     LastName = paymentSystemWidgetGeneration.LastName
-                },
+                }
             }
         };
     }

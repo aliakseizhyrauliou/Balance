@@ -10,7 +10,6 @@ using Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Transaction.Tra
 using Barion.Balance.Infrastructure.External.BePaid.Configuration;
 using Barion.Balance.Infrastructure.External.BePaid.Helpers;
 using Newtonsoft.Json;
-using Exception = System.Exception;
 
 namespace Barion.Balance.Infrastructure.External.BePaid.Services;
 
@@ -55,6 +54,31 @@ public class BePaidService(IPaymentSystemAuthorizationService paymentSystemAutho
             TransactionStatus.Incomplete => await ProcessFailedCreatePaymentMethodWidgetStatus(
                 concretePaymentSystemObjectResponse, paymentSystemWidgetGeneration),
             _ => throw new NotImplementedException()
+        };
+    }
+    
+    public async Task<ProcessHoldPaymentSystemResult> ProcessHoldPaymentSystemResponse(
+        Hold hold,
+        TransactionRoot transaction,
+        CancellationToken cancellationToken = default)
+    {
+        return transaction!.Transaction.Status switch
+        {
+            TransactionStatus.Successful => ProcessSuccessfulHoldStatus(
+                transaction, hold),
+            _ => throw new NotImplementedException()
+        };
+    }
+
+    private ProcessHoldPaymentSystemResult ProcessSuccessfulHoldStatus(TransactionRoot transaction, Hold hold)
+    {
+        hold.PaymentSystemTransactionId = transaction.Transaction.Id;
+
+        return new ProcessHoldPaymentSystemResult
+        {
+            IsOk = true,
+            PaymentSystemTransactionId = transaction.Transaction.Id,
+            Hold = hold
         };
     }
 
@@ -109,7 +133,7 @@ public class BePaidService(IPaymentSystemAuthorizationService paymentSystemAutho
 
     }
 
-    public async Task<Hold> MakeHold(Hold makeHold, 
+    public async Task<ProcessHoldPaymentSystemResult> MakeHold(Hold makeHold, 
         PaymentMethod paymentMethod,
         CancellationToken cancellationToken)
     {
@@ -121,7 +145,8 @@ public class BePaidService(IPaymentSystemAuthorizationService paymentSystemAutho
         
         var sendResult = await SendMessageAndCast<TransactionRoot>(httpMessage, cancellationToken);
 
-        return null;
+
+        return await ProcessHoldPaymentSystemResponse(makeHold, sendResult, cancellationToken);
     }
 
     public Task<bool> CaptureHold(Hold hold, CancellationToken cancellationToken)
@@ -147,14 +172,14 @@ public class BePaidService(IPaymentSystemAuthorizationService paymentSystemAutho
     {
         var apiResponse = await httpClient.SendAsync(requestMessage, cancellationToken);
 
-        /*try
+        try
         {
             apiResponse.EnsureSuccessStatusCode();
         }
         catch (Exception ex)
         {
             throw new PaymentSystemException(ex.Message);
-        }*/
+        }
 
         var apiContent = await apiResponse.Content.ReadAsStringAsync(cancellationToken);
 
