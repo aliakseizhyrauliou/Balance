@@ -71,7 +71,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
 
         var bePaidConfiguration = new BePaidConfiguration()
         {
-            Urls = new Urls()
+            Urls = new Urls
             {
                 CheckoutUrl = new Urls.UrlWithDescription()
                 {
@@ -117,7 +117,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
                 {
                     ButtonText = "Привязать карту",
                     Language = "RU",
-                    NotificationUrl = "https://124e-185-158-216-97.ngrok-free.app/api/BePaid/verifyPaymentMethodNotification",
+                    NotificationUrl = "https://7182-134-17-4-170.ngrok-free.app/api/BePaid/verifyPaymentMethodNotification",
                     SaveCardToggle = new SaveCardToggle
                     {
                         Display = true,

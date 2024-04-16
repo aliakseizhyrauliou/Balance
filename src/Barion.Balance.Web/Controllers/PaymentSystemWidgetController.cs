@@ -7,7 +7,7 @@ namespace Barion.Balance.Web.Controllers;
 public class PaymentSystemWidgetController(ISender sender, IMediator mediator)
     : MediatrController(sender, mediator)
 {
-    [HttpGet("getAvtive")]
+    [HttpGet("getActive")]
     public async Task<CheckoutDto> GetActiveWidget(CancellationToken cancellationToken)
     {
         return await mediator.Send(new GetActivePaymentSystemWidgetQuery(), cancellationToken);

@@ -1,4 +1,5 @@
 using Barion.Balance.Domain.Entities;
+using Barion.Balance.Domain.Services.ServiceResponses;
 
 namespace Barion.Balance.Domain.Services;
 
@@ -8,7 +9,7 @@ public interface IPaymentSystemService
     Task<string> GeneratePaymentSystemWidget(PaymentSystemWidgetGeneration paymentSystemWidgetGeneration,
         CancellationToken cancellationToken);
 
-    Task<PaymentMethod> ProcessCreatePaymentMethodPaymentSystemWidgetResponse(string jsonResponse,
+    Task<ProcessCreatePaymentMethodPaymentSystemWidgetResult> ProcessCreatePaymentMethodPaymentSystemWidgetResponse(string jsonResponse,
         PaymentSystemWidgetGeneration widgetGeneration,
         CancellationToken cancellationToken = default);
     Task<Hold> MakeHold(Hold hold,

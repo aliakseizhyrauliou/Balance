@@ -1,8 +1,8 @@
 using System.Text;
-using Barion.Balance.Application.Common.Repositories;
 using Barion.Balance.Domain.Entities;
 using Barion.Balance.Domain.Enums;
 using Barion.Balance.Domain.Services;
+using Barion.Balance.Domain.Services.ServiceResponses;
 using Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Checkout.Response;
 using Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Transaction;
 using Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Transaction.TransactionStatus;
@@ -12,8 +12,7 @@ using Newtonsoft.Json;
 
 namespace Barion.Balance.Infrastructure.External.BePaid.Services;
 
-public class BePaidService(IHoldRepository holdRepository,
-    IPaymentSystemAuthorizationService paymentSystemAuthorizationService,
+public class BePaidService(IPaymentSystemAuthorizationService paymentSystemAuthorizationService,
     IPaymentSystemConfigurationService configurationService,
     HttpClient httpClient) : IPaymentSystemService
 {
@@ -37,26 +36,43 @@ public class BePaidService(IHoldRepository holdRepository,
         };
     }
 
-    public async Task<PaymentMethod> ProcessCreatePaymentMethodPaymentSystemWidgetResponse(string jsonResponse,
+    public async Task<ProcessCreatePaymentMethodPaymentSystemWidgetResult> ProcessCreatePaymentMethodPaymentSystemWidgetResponse(string jsonResponse,
         PaymentSystemWidgetGeneration paymentSystemWidgetGeneration,
         CancellationToken cancellationToken = default)
     {
         var concretePaymentSystemObjectResponse = JsonConvert.DeserializeObject<TransactionRoot>(jsonResponse);
 
-        switch (concretePaymentSystemObjectResponse!.Transaction.Status)
+        return concretePaymentSystemObjectResponse!.Transaction.Status switch
         {
-            case TransactionStatus.Successful:
-                return await ProcessSuccessfulCreatePaymentMethodWidgetStatus(concretePaymentSystemObjectResponse,paymentSystemWidgetGeneration, cancellationToken);
-            default:
-                throw new NotImplementedException();
-        }   
+            TransactionStatus.Successful => await ProcessSuccessfulCreatePaymentMethodWidgetStatus(
+                concretePaymentSystemObjectResponse, paymentSystemWidgetGeneration),
+            TransactionStatus.Failed => await ProcessFailedCreatePaymentMethodWidgetStatus(
+                concretePaymentSystemObjectResponse, paymentSystemWidgetGeneration),
+            TransactionStatus.Expired => await ProcessFailedCreatePaymentMethodWidgetStatus(
+                concretePaymentSystemObjectResponse, paymentSystemWidgetGeneration),
+            TransactionStatus.Incomplete => await ProcessFailedCreatePaymentMethodWidgetStatus(
+                concretePaymentSystemObjectResponse, paymentSystemWidgetGeneration),
+            _ => throw new NotImplementedException()
+        };
     }
 
-    private async Task<PaymentMethod> ProcessSuccessfulCreatePaymentMethodWidgetStatus(TransactionRoot transaction, 
-        PaymentSystemWidgetGeneration paymentSystemWidgetGeneration,
-        CancellationToken cancellationToken)
+    private async Task<ProcessCreatePaymentMethodPaymentSystemWidgetResult> ProcessFailedCreatePaymentMethodWidgetStatus(TransactionRoot concretePaymentSystemObjectResponse,
+        PaymentSystemWidgetGeneration paymentSystemWidgetGeneration)
     {
-        var paymentMethod = new PaymentMethod()
+        return new ProcessCreatePaymentMethodPaymentSystemWidgetResult
+        {
+            IsOk = false,
+            PaymentMethod = null,
+            PaymentSystemWidgetGeneration = paymentSystemWidgetGeneration,
+            ErrorMessage = concretePaymentSystemObjectResponse.Transaction.Message,
+            FriendlyErrorMessage = concretePaymentSystemObjectResponse.Transaction.Message
+        };
+    }
+
+    private async Task<ProcessCreatePaymentMethodPaymentSystemWidgetResult> ProcessSuccessfulCreatePaymentMethodWidgetStatus(TransactionRoot transaction, 
+        PaymentSystemWidgetGeneration paymentSystemWidgetGeneration)
+    {
+        var paymentMethod = new PaymentMethod
         {
             UserId = paymentSystemWidgetGeneration.UserId,
             First1 = transaction.Transaction.CreditCard.First1,
@@ -66,8 +82,14 @@ public class BePaidService(IHoldRepository holdRepository,
             ExpiryMonth = transaction.Transaction.CreditCard.ExpMonth.ToString(),
         };
 
-        return paymentMethod;
+        return new ProcessCreatePaymentMethodPaymentSystemWidgetResult
+        {
+            PaymentSystemWidgetGeneration = paymentSystemWidgetGeneration,
+            PaymentMethod = paymentMethod,
+            IsOk = true
+        };
     }
+    
 
     private async Task<string> GenerateAuthorizationWidgetUrl(PaymentSystemWidgetGeneration paymentSystemWidgetGeneration, 
         CancellationToken cancellationToken)

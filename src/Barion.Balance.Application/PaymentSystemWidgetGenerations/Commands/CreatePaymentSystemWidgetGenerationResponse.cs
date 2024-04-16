@@ -1,4 +1,5 @@
 using Barion.Balance.Application.Common.Repositories;
+using Barion.Balance.Domain.Entities;
 using Barion.Balance.Domain.Services;
 using MediatR;
 
@@ -19,9 +20,37 @@ public sealed class ProcessWidgetResponseCommandHandler(IPaymentSystemService pa
 
         var dbWidget = await repository.GetByIdAsync(widgetId);
 
-        var newPaymentMethod = await paymentSystemService.ProcessCreatePaymentMethodPaymentSystemWidgetResponse(request.JsonResponse, dbWidget);
+        if (dbWidget.IsDisabled)
+        {
+            //TODO Log something
+            return;
+        }
+
+        var newPaymentMethodServiceResponse = await paymentSystemService.ProcessCreatePaymentMethodPaymentSystemWidgetResponse(request.JsonResponse, dbWidget);
+
+        await UpdatePaymentWidget(dbWidget, newPaymentMethodServiceResponse.IsOk);
+
+        if (newPaymentMethodServiceResponse is { IsOk: true, PaymentMethod: not null })
+        {
+            await paymentMethodRepository.InsertAsync(newPaymentMethodServiceResponse.PaymentMethod);
+        }
+    }
+
+    private async Task UpdatePaymentWidget(PaymentSystemWidgetGeneration paymentSystemWidgetGeneration, 
+        bool isOk)
+    {
+        if (!isOk)
+        {
+            paymentSystemWidgetGeneration.IsSuccess = false;
+            paymentSystemWidgetGeneration.IsDisabled = true;
+        }
+        else
+        {
+            paymentSystemWidgetGeneration.IsSuccess = true;
+            paymentSystemWidgetGeneration.IsDisabled = true;
+            paymentSystemWidgetGeneration.IsCompleted = true;
+        }
         
-        await paymentMethodRepository.InsertAsync(newPaymentMethod);
-        
+        await repository.UpdateAsync(paymentSystemWidgetGeneration);
     }
 }
