@@ -10,14 +10,13 @@ public class PaymentMethod : BaseAuditableEntity
     /// </summary>
     public string? Description { get; set; }
     
-
     /// <summary>
     /// Идентификатор пользователя
     /// </summary>
-    public string UserId { get; set; }
+    public required string UserId { get; set; }
 
     /// <summary>
-    /// Первые 6 знаков карты
+    /// Первый символ карты
     /// </summary>
     public string? First1 { get; set; }
 
@@ -27,6 +26,11 @@ public class PaymentMethod : BaseAuditableEntity
     public string? Last4 { get; set; }
 
     /// <summary>
+    /// В случае, если имеем доступ к другим символам
+    /// </summary>
+    public required string CardNumberData { get; set; }
+
+    /// <summary>
     /// Тип карты (виза, мир итд)
     /// </summary>
     public BankCardType CardType { get; set; }
@@ -34,22 +38,24 @@ public class PaymentMethod : BaseAuditableEntity
     /// <summary>
     /// Действует до: год
     /// </summary>
-    public string? ExpiryYear { get; set; }
+    public required int ExpiryYear { get; set; }
 
     /// <summary>
     /// Действует до: месяц
     /// </summary>
-    public string? ExpiryMonth { get; set; }
+    public required int ExpiryMonth { get; set; }
     
-
     /// <summary>
     /// Is selected by user as payment method
     /// </summary>
     public bool IsSelected { get; set; }
 
     public string? PaymentSystemStamp { get; set; }
-    
-    public string? PaymentSystemToken { get; set; }
+    public required string PaymentSystemToken { get; set; }
 
     public bool IsVerifiedByPaymentSystem { get; set; }
+
+    public ICollection<Hold>? Holds { get; set; }
+
+    public ICollection<AccountRecord>? AccountRecords { get; set; }
 }

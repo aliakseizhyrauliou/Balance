@@ -48,7 +48,7 @@ public sealed class ProcessWidgetResponseCommandHandler(IPaymentSystemService pa
         {
             paymentSystemWidgetGeneration.IsSuccess = true;
             paymentSystemWidgetGeneration.IsDisabled = true;
-            paymentSystemWidgetGeneration.IsCompleted = true;
+            paymentSystemWidgetGeneration.GotResponseFromPaymentSystem = true;
         }
         
         await repository.UpdateAsync(paymentSystemWidgetGeneration);

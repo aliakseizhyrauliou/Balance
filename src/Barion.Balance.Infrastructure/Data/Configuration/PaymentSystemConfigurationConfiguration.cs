@@ -8,6 +8,11 @@ public class PaymentSystemConfigurationConfiguration : IEntityTypeConfiguration<
 {
     public void Configure(EntityTypeBuilder<PaymentSystemConfiguration> builder)
     {
-        builder.HasQueryFilter(x => !x.IsDeleted);
+        builder.ShowOnlyNotDeleted();
+
+        builder.HasMany(x => x.PaymentSystemWidgetGenerations)
+            .WithOne(x => x.PaymentSystemConfiguration)
+            .HasForeignKey(x => x.PaymentSystemConfigurationId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

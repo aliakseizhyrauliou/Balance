@@ -10,7 +10,7 @@ namespace Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Transaction
     public class Transaction
     {
         [JsonProperty(PropertyName = "uid")]
-        public required string Id { get; set; }
+        public required string? Id { get; set; }
 
         [JsonProperty(PropertyName = "status")]
         public required string Status { get; set; }

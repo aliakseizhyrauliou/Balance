@@ -12,7 +12,7 @@ public class PaymentSystemWidgetGenerationRepository(IBalanceDbContext context) 
         CancellationToken cancellationToken = default)
     {
         return await dbSet.SingleOrDefaultAsync(x => x.UserId == userId &&
-                                                     !x.IsCompleted &&
+                                                     !x.GotResponseFromPaymentSystem &&
                                                      !x.IsDisabled, cancellationToken);
     }
 
@@ -20,7 +20,7 @@ public class PaymentSystemWidgetGenerationRepository(IBalanceDbContext context) 
         CancellationToken cancellationToken = default)
     {
         await dbSet
-            .Where(x => x.UserId == userId && !x.IsCompleted)
+            .Where(x => x.UserId == userId && !x.GotResponseFromPaymentSystem)
             .ExecuteUpdateAsync(x 
                 => x.SetProperty(paymentSystemWidgetGeneration => paymentSystemWidgetGeneration.IsDisabled, true), cancellationToken);
     }

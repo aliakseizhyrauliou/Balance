@@ -17,5 +17,5 @@ public interface IBaseRepository<TEntity> where TEntity
     Task UpdateAsync(TEntity entity, CancellationToken cancellationToken = default);
     Task DeleteAsync(TEntity entity, CancellationToken cancellationToken = default);
     Task<TEntity?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
-    Task<TEntity> GetListAsync(CancellationToken cancellationToken = default);
+    Task<List<TEntity>> GetListAsync(CancellationToken cancellationToken = default);
 }

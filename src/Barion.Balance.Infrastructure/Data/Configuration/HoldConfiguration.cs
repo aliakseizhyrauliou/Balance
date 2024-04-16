@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Barion.Balance.Infrastructure.Data.Configuration;
 
-public class PaymentSystemWidgetGenerationConfiguration : IEntityTypeConfiguration<PaymentSystemWidgetGeneration>
+public class HoldConfiguration: IEntityTypeConfiguration<Hold>
 {
-    public void Configure(EntityTypeBuilder<PaymentSystemWidgetGeneration> builder)
+    public void Configure(EntityTypeBuilder<Hold> builder)
     {
         builder.ShowOnlyNotDeleted();
     }

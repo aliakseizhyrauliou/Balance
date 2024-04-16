@@ -116,8 +116,9 @@ public class BePaidService(IPaymentSystemAuthorizationService paymentSystemAutho
             First1 = transaction.Transaction.CreditCard.First1,
             Last4 = transaction.Transaction.CreditCard.Last4,
             PaymentSystemToken = transaction.Transaction.CreditCard.Token,
-            ExpiryYear = transaction.Transaction.CreditCard.ExpYear.ToString(),
-            ExpiryMonth = transaction.Transaction.CreditCard.ExpMonth.ToString(),
+            ExpiryYear = transaction.Transaction.CreditCard.ExpYear,
+            ExpiryMonth = transaction.Transaction.CreditCard.ExpMonth,
+            CardNumberData = JsonConvert.SerializeObject(new {FirstOne = transaction.Transaction.CreditCard.First1, LastFour = transaction.Transaction.CreditCard.Last4}),
         };
 
         return new ProcessCreatePaymentMethodPaymentSystemWidgetResult
@@ -145,7 +146,7 @@ public class BePaidService(IPaymentSystemAuthorizationService paymentSystemAutho
 
     }
 
-    public async Task<ProcessHoldPaymentSystemResult> MakeHold(Hold makeHold, 
+    public async Task<ProcessHoldPaymentSystemResult> Hold(Hold makeHold, 
         PaymentMethod paymentMethod,
         CancellationToken cancellationToken)
     {

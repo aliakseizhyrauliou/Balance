@@ -59,8 +59,8 @@ public class BaseRepository<TEntity>
         return await dbSet.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
 
-    public Task<TEntity> GetListAsync(CancellationToken cancellationToken = default)
+    public async Task<List<TEntity>> GetListAsync(CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        return await dbSet.ToListAsync(cancellationToken);
     }
 }

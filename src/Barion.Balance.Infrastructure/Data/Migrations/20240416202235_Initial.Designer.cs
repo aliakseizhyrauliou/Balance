@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Barion.Balance.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(BalanceDbContext))]
-    [Migration("20240414110654_AddIsCompleted")]
-    partial class AddIsCompleted
+    [Migration("20240416202235_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,13 +33,10 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("ChargerId")
-                        .HasColumnType("integer");
+                    b.Property<string>("AdditionalData")
+                        .HasColumnType("jsonb");
 
-                    b.Property<int?>("ConnectorId")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal>("Cost")
+                    b.Property<decimal>("Amount")
                         .HasColumnType("numeric");
 
                     b.Property<DateTimeOffset>("Created")
@@ -54,11 +51,8 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("IsSuccessfully")
+                    b.Property<bool>("IsSuccess")
                         .HasColumnType("boolean");
-
-                    b.Property<string>("Last4")
-                        .HasColumnType("text");
 
                     b.Property<DateTimeOffset>("LastModified")
                         .HasColumnType("timestamp with time zone");
@@ -66,13 +60,15 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("text");
 
-                    b.Property<int?>("OperatorId")
-                        .HasColumnType("integer");
+                    b.Property<string>("OperatorId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                    b.Property<int>("PaidResourceId")
-                        .HasColumnType("integer");
+                    b.Property<string>("PaidResourceId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                    b.Property<int>("PaidResourceType")
+                    b.Property<int?>("PaidResourceTypeId")
                         .HasColumnType("integer");
 
                     b.Property<int>("PaymentMethodId")
@@ -82,18 +78,15 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("TagId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int?>("TariffId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PaidResourceTypeId");
+
+                    b.HasIndex("PaymentMethodId");
 
                     b.ToTable("AccountRecords");
                 });
@@ -130,13 +123,15 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("text");
 
-                    b.Property<int?>("OperatorId")
-                        .HasColumnType("integer");
+                    b.Property<string>("OperatorId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                    b.Property<int?>("PaidResourceId")
-                        .HasColumnType("integer");
+                    b.Property<string>("PaidResourceId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                    b.Property<int>("PaidResourceType")
+                    b.Property<int>("PaidResourceTypeId")
                         .HasColumnType("integer");
 
                     b.Property<int>("PaymentMethodId")
@@ -151,7 +146,43 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PaidResourceTypeId");
+
+                    b.HasIndex("PaymentMethodId");
+
                     b.ToTable("Holds");
+                });
+
+            modelBuilder.Entity("Barion.Balance.Domain.Entities.PaidResourceType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTimeOffset>("Created")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset>("LastModified")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TypeName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PaidResourceType");
                 });
 
             modelBuilder.Entity("Barion.Balance.Domain.Entities.PaymentMethod", b =>
@@ -161,6 +192,10 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CardNumberData")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("CardType")
                         .HasColumnType("integer");
@@ -174,11 +209,11 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<string>("ExpiryMonth")
-                        .HasColumnType("text");
+                    b.Property<int>("ExpiryMonth")
+                        .HasColumnType("integer");
 
-                    b.Property<string>("ExpiryYear")
-                        .HasColumnType("text");
+                    b.Property<int>("ExpiryYear")
+                        .HasColumnType("integer");
 
                     b.Property<string>("First1")
                         .HasColumnType("text");
@@ -205,6 +240,7 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("PaymentSystemToken")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("UserId")
@@ -276,7 +312,7 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<bool>("IsCompleted")
+                    b.Property<bool>("GotResponseFromPaymentSystem")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsDeleted")
@@ -298,6 +334,9 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int?>("PaidResourceTypeId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("PaymentSystemConfigurationId")
                         .HasColumnType("integer");
 
@@ -311,6 +350,7 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("WidgetReason")
@@ -318,20 +358,76 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PaidResourceTypeId");
+
                     b.HasIndex("PaymentSystemConfigurationId");
 
                     b.ToTable("PaymentSystemWidgetGenerations");
                 });
 
-            modelBuilder.Entity("Barion.Balance.Domain.Entities.PaymentSystemWidgetGeneration", b =>
+            modelBuilder.Entity("Barion.Balance.Domain.Entities.AccountRecord", b =>
                 {
-                    b.HasOne("Barion.Balance.Domain.Entities.PaymentSystemConfiguration", "PaymentSystemConfiguration")
-                        .WithMany("PaymentSystemWidgetGenerations")
-                        .HasForeignKey("PaymentSystemConfigurationId")
+                    b.HasOne("Barion.Balance.Domain.Entities.PaidResourceType", null)
+                        .WithMany("AccountRecords")
+                        .HasForeignKey("PaidResourceTypeId");
+
+                    b.HasOne("Barion.Balance.Domain.Entities.PaymentMethod", "PaymentMethod")
+                        .WithMany("AccountRecords")
+                        .HasForeignKey("PaymentMethodId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired();
+
+                    b.Navigation("PaymentMethod");
+                });
+
+            modelBuilder.Entity("Barion.Balance.Domain.Entities.Hold", b =>
+                {
+                    b.HasOne("Barion.Balance.Domain.Entities.PaidResourceType", "PaidResourceType")
+                        .WithMany("Holds")
+                        .HasForeignKey("PaidResourceTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Barion.Balance.Domain.Entities.PaymentMethod", "PaymentMethod")
+                        .WithMany("Holds")
+                        .HasForeignKey("PaymentMethodId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired();
+
+                    b.Navigation("PaidResourceType");
+
+                    b.Navigation("PaymentMethod");
+                });
+
+            modelBuilder.Entity("Barion.Balance.Domain.Entities.PaymentSystemWidgetGeneration", b =>
+                {
+                    b.HasOne("Barion.Balance.Domain.Entities.PaidResourceType", null)
+                        .WithMany("PaymentSystemWidgetGenerations")
+                        .HasForeignKey("PaidResourceTypeId");
+
+                    b.HasOne("Barion.Balance.Domain.Entities.PaymentSystemConfiguration", "PaymentSystemConfiguration")
+                        .WithMany("PaymentSystemWidgetGenerations")
+                        .HasForeignKey("PaymentSystemConfigurationId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired();
+
                     b.Navigation("PaymentSystemConfiguration");
+                });
+
+            modelBuilder.Entity("Barion.Balance.Domain.Entities.PaidResourceType", b =>
+                {
+                    b.Navigation("AccountRecords");
+
+                    b.Navigation("Holds");
+
+                    b.Navigation("PaymentSystemWidgetGenerations");
+                });
+
+            modelBuilder.Entity("Barion.Balance.Domain.Entities.PaymentMethod", b =>
+                {
+                    b.Navigation("AccountRecords");
+
+                    b.Navigation("Holds");
                 });
 
             modelBuilder.Entity("Barion.Balance.Domain.Entities.PaymentSystemConfiguration", b =>
