@@ -52,9 +52,10 @@ public sealed class CreatePaymentSystemWidgetGenerationCommandHandler(
 
             await transaction.CommitAsync(cancellationToken);
         }
-        catch (Exception ex) 
+        catch (Exception) 
         {
             await transaction.RollbackAsync(cancellationToken);
+            throw;
         }
     }
 

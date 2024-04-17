@@ -22,9 +22,16 @@ public class BePaidService(IPaymentSystemAuthorizationService paymentSystemAutho
 
     public async Task<int> GetWidgetId(string jsonResponse, CancellationToken cancellationToken)
     {
-        var concretePaymentSystemObjectResponse = JsonConvert.DeserializeObject<TransactionRoot>(jsonResponse);
+        try
+        {
+            var concretePaymentSystemObjectResponse = JsonConvert.DeserializeObject<TransactionRoot>(jsonResponse);
 
-        return int.Parse(concretePaymentSystemObjectResponse.Transaction.TrackingId);
+            return int.Parse(concretePaymentSystemObjectResponse.Transaction.TrackingId);
+        }
+        catch (Exception)
+        {
+            throw new PaymentSystemWidgetException("cannot_parse_widgetId_from_payment_system_webhook_request");
+        }
     }
 
     public async Task<string> GeneratePaymentSystemWidget(PaymentSystemWidgetGeneration paymentSystemWidgetGeneration,
@@ -184,13 +191,14 @@ public class BePaidService(IPaymentSystemAuthorizationService paymentSystemAutho
         CancellationToken cancellationToken)
     {
         var apiResponse = await httpClient.SendAsync(requestMessage, cancellationToken);
-        
+
         var apiContent = await apiResponse.Content.ReadAsStringAsync(cancellationToken);
 
-        //TODO
-        /*
-        var test = JsonConvert.DeserializeObject<BePaidErrorRoot>(apiContent);
-        */
+        if (!apiResponse.IsSuccessStatusCode)
+        {
+            var errorModel = JsonConvert.DeserializeObject<BePaidErrorsRoot>(apiContent);
+            throw new PaymentSystemException(errorModel.Message);
+        }
         
         var apiResponseDto = JsonConvert.DeserializeObject<T>(apiContent);
         
@@ -201,7 +209,7 @@ public class BePaidService(IPaymentSystemAuthorizationService paymentSystemAutho
         HttpMethod httpMethod,
         string requestUrl)
     {
-        var message = new HttpRequestMessage()
+        var message = new HttpRequestMessage
         {
             RequestUri = new Uri(requestUrl),
             Method = httpMethod

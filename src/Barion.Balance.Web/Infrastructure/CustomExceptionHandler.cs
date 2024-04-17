@@ -1,4 +1,5 @@
 using Barion.Balance.Application.Common.Exceptions;
+using Barion.Balance.Domain.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using NotFoundException = Barion.Balance.Application.Common.Exceptions.NotFoundException;
@@ -16,6 +17,7 @@ public class CustomExceptionHandler : IExceptionHandler
                 { typeof(ValidationException), HandleValidationException },
                 { typeof(NotFoundException), HandleNotFoundException },
                 { typeof(ForbiddenAccessException), HandleForbiddenAccessException },
+                {typeof(PaymentSystemException), HandlePaymentSystemException }
             };
     }
 
@@ -80,6 +82,21 @@ public class CustomExceptionHandler : IExceptionHandler
             Status = StatusCodes.Status403Forbidden,
             Title = "Forbidden",
             Type = "https://tools.ietf.org/html/rfc7231#section-6.5.3"
+        });
+    }
+
+    private async Task HandlePaymentSystemException(HttpContext httpContext, Exception ex)
+    {
+        var exception = (PaymentSystemException)ex;
+
+        httpContext.Response.StatusCode = StatusCodes.Status502BadGateway;
+
+        await httpContext.Response.WriteAsJsonAsync(new ProblemDetails
+        {
+            Status = StatusCodes.Status502BadGateway,
+            Title = "Status502BadGateway",
+            Type = "https://tools.ietf.org/html/rfc7231#section-6.5.3",
+            Detail = exception.Message
         });
     }
 }
