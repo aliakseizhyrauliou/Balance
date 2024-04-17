@@ -132,6 +132,7 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                     IsCaptured = table.Column<bool>(type: "boolean", nullable: false),
                     IsVoided = table.Column<bool>(type: "boolean", nullable: false),
                     PaymentMethodId = table.Column<int>(type: "integer", nullable: false),
+                    AdditionalData = table.Column<string>(type: "jsonb", nullable: true),
                     Created = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<string>(type: "text", nullable: true),
                     LastModified = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -146,7 +147,7 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                         column: x => x.PaidResourceTypeId,
                         principalTable: "PaidResourceType",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Holds_PaymentMethods_PaymentMethodId",
                         column: x => x.PaymentMethodId,

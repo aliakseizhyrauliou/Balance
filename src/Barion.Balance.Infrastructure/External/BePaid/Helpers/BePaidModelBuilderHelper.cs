@@ -4,8 +4,7 @@ using Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Checkout.Reques
 using Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Checkout.Request.Order;
 using Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Checkout.Request.Settings;
 using Barion.Balance.Infrastructure.External.BePaid.BePaidModels.CreateTransaction;
-using Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Transaction;
-using Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Transaction.CreditCard;
+using Barion.Balance.Infrastructure.External.BePaid.BePaidModels.ParentId;
 using Barion.Balance.Infrastructure.External.BePaid.Configuration;
 using PaymentMethod = Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Checkout.Request.PaymentMethod.PaymentMethod;
 
@@ -13,6 +12,19 @@ namespace Barion.Balance.Infrastructure.External.BePaid.Helpers;
 
 public static class BePaidModelBuilderHelper
 {
+
+    public static ParentIdRoot BuildParentIdModel(string parentId, int amount)
+    {
+        return new ParentIdRoot()
+        {
+            Request = new ParentIdRequest()
+            {
+                ParentId = parentId,
+                Amount = amount
+            }
+        };
+    }
+
     public static CreateTransactionRoot BuildHoldModel(Hold hold,
         string cardToken,
         BePaidConfiguration configuration)

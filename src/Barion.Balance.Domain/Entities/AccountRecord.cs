@@ -52,5 +52,5 @@ public class AccountRecord : BaseAuditableEntity
     /// Id платежного метода
     /// </summary>
     public required int PaymentMethodId { get; set; }
-    public required PaymentMethod PaymentMethod { get; set; }
+    public PaymentMethod PaymentMethod { get; set; }
 }

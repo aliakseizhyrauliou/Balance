@@ -1,11 +1,11 @@
-using AutoMapper;
 using Barion.Balance.Application.Common.Exceptions;
 using Barion.Balance.Application.Common.Repositories;
 using Barion.Balance.Domain.Entities;
-using Barion.Balance.Domain.Enums;
 using Barion.Balance.Domain.Exceptions;
 using Barion.Balance.Domain.Services;
+using FluentValidation;
 using MediatR;
+using Newtonsoft.Json;
 
 namespace Barion.Balance.Application.Holds.Commands;
 
@@ -20,9 +20,20 @@ public record MakeHoldCommand : IRequest<int>
 
     public required int PaidResourceTypeId { get; set; }
     
-    public required int PaymentMethodId { get; set; }    
+    public required int PaymentMethodId { get; set; }
+
+    [JsonProperty]
+    public string? AdditionalData { get; set; }
 }
 
+public class MakeHoldCommandValidator : AbstractValidator<MakeHoldCommand>
+{
+    public MakeHoldCommandValidator()
+    {
+        RuleFor(x => x.Amount)
+            .GreaterThanOrEqualTo(0);
+    }
+}
 
 /// <summary>
 /// Холдирует сумму и записывает результат в базу данных
@@ -63,6 +74,7 @@ public sealed class MakeHoldCommandHandler(IPaymentSystemService paymentSystemSe
             Amount = request.Amount,
             PaidResourceTypeId = request.PaidResourceTypeId,
             PaymentSystemTransactionId = null,
+            AdditionalData = request.AdditionalData
         };
         
         //Данный метод ничего не сохранаяет в базу, это не его ответственность

@@ -49,19 +49,19 @@ public interface IPaymentSystemService
     /// <summary>
     /// Удержать сумму холда
     /// </summary>
-    /// <param name="hold"></param>
+    /// <param name="captureHold"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<bool> CaptureHold(Hold hold, 
+    Task<ProcessCaptureHoldPaymentSystemResult> CaptureHold(Hold captureHold, 
         CancellationToken cancellationToken);
 
     
     /// <summary>
     /// Вернуть сумму холда
     /// </summary>
-    /// <param name="hold"></param>
+    /// <param name="voidHold"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<bool> VoidHold(Hold hold,
+    Task<ProcessVoidHoldPaymentSystemResult> VoidHold(Hold voidHold,
         CancellationToken cancellationToken);
 }

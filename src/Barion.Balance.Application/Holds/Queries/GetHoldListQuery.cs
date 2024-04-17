@@ -1,11 +1,29 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using Barion.Balance.Domain.Common;
-using Barion.Balance.Domain.Enums;
+using AutoMapper;
+using Barion.Balance.Application.Common.Repositories;
+using Barion.Balance.Domain.Entities;
+using MediatR;
 
-namespace Barion.Balance.Domain.Entities;
+namespace Barion.Balance.Application.Holds.Queries;
 
-public class Hold : BaseAuditableEntity
+public class GetHoldListQuery : IRequest<List<HoldDto>>;
+
+public class GetHoldListQueryHandler(IHoldRepository holdRepository,
+    IMapper mapper) 
+    : IRequestHandler<GetHoldListQuery, List<HoldDto>>
 {
+    public async Task<List<HoldDto>> Handle(GetHoldListQuery request, CancellationToken cancellationToken)
+    {
+        var holdList = await holdRepository.GetListAsync(cancellationToken);
+
+        return mapper.Map<List<HoldDto>>(holdList);
+    }
+}
+
+public class HoldDto
+{
+    public int Id { get; set; }
+
     /// <summary>
     /// Identifier of user
     /// </summary>
@@ -55,4 +73,12 @@ public class Hold : BaseAuditableEntity
     
     [Column(TypeName = "jsonb")]
     public string? AdditionalData { get; set; }
+    
+    private class Mapping : Profile
+    {
+        public Mapping()
+        {
+            CreateMap<Hold, HoldDto>();
+        }
+    }
 }

@@ -96,6 +96,9 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("AdditionalData")
+                        .HasColumnType("jsonb");
+
                     b.Property<decimal>("Amount")
                         .HasColumnType("numeric");
 
@@ -382,7 +385,7 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                     b.HasOne("Barion.Balance.Domain.Entities.PaidResourceType", "PaidResourceType")
                         .WithMany("Holds")
                         .HasForeignKey("PaidResourceTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Barion.Balance.Domain.Entities.PaymentMethod", "PaymentMethod")
