@@ -3,7 +3,7 @@ using Barion.Balance.Domain.Common;
 
 namespace Barion.Balance.Domain.Entities;
 
-public class AccountRecord : BaseAuditableEntity
+public class Payment : BaseAuditableEntity
 {
     /// <summary>
     /// Идентификатор пользователя 
@@ -41,7 +41,7 @@ public class AccountRecord : BaseAuditableEntity
     /// <summary>
     /// Успешная ли транзакция
     /// </summary>
-    public required bool IsSuccess { get; set; }
+    public bool IsSuccess { get; set; }
     
     /// <summary>
     /// Была ли оплата за счет бонусов
@@ -53,4 +53,7 @@ public class AccountRecord : BaseAuditableEntity
     /// </summary>
     public required int PaymentMethodId { get; set; }
     public PaymentMethod PaymentMethod { get; set; }
+
+    public required int PaidResourceTypeId { get; set; }
+    public PaidResourceType PaidResourceType { get; set; }
 }

@@ -57,5 +57,5 @@ public class PaymentMethod : BaseAuditableEntity
 
     public ICollection<Hold>? Holds { get; set; }
 
-    public ICollection<AccountRecord>? AccountRecords { get; set; }
+    public ICollection<Payment>? AccountRecords { get; set; }
 }

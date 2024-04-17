@@ -64,4 +64,14 @@ public interface IPaymentSystemService
     /// <returns></returns>
     Task<ProcessVoidHoldPaymentSystemResult> VoidHold(Hold voidHold,
         CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Создает платеж
+    /// </summary>
+    /// <param name="payment"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<ProcessPaymentPaymentSystemResult> Payment(Payment payment,
+        PaymentMethod paymentMethod,
+        CancellationToken cancellationToken);
 }

@@ -50,14 +50,14 @@ public class CaptureHoldCommandHandler(IPaymentSystemService paymentSystemServic
             throw new Exception("hold_was_null");
 
 
-        if (captureHoldPaymentSystemResult is {NeedToCreateAccountRecord: true, AccountRecord: not null})
+        if (captureHoldPaymentSystemResult is {NeedToCreateAccountRecord: true, Payment: not null})
         {
             await using var transaction = await holdRepository.BeginTransaction(IsolationLevel.ReadCommitted, cancellationToken);
             
             try
             {
                 await holdRepository.UpdateAsync(captureHoldPaymentSystemResult.Hold!, cancellationToken);
-                await accountRecordRepository.InsertAsync(captureHoldPaymentSystemResult.AccountRecord,
+                await accountRecordRepository.InsertAsync(captureHoldPaymentSystemResult.Payment,
                     cancellationToken);
 
                 await transaction.CommitAsync(cancellationToken);

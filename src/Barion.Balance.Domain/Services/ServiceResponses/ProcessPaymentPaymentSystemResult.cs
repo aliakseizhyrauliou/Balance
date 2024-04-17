@@ -2,16 +2,11 @@ using Barion.Balance.Domain.Entities;
 
 namespace Barion.Balance.Domain.Services.ServiceResponses;
 
-public class ProcessCaptureHoldPaymentSystemResult
+public class ProcessPaymentPaymentSystemResult
 {
     public bool IsOk { get; set; }
     public string? PaymentSystemTransactionId { get; set; }
-
-    public bool NeedToCreateAccountRecord { get; set; }
-
-    public Payment? Payment { get; set; }
-    public Hold? Hold { get; set; }
+    public Payment? AccountRecord { get; set; }
     public string ErrorMessage { get; set; }
     public string FriendlyErrorMessage { get; set; }
-    
 }

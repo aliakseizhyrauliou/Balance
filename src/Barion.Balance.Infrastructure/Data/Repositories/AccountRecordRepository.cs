@@ -5,4 +5,4 @@ using Barion.Balance.Domain.Entities;
 namespace Barion.Balance.Infrastructure.Data.Repositories;
 
 public class AccountRecordRepository(IBalanceDbContext context)
-    : BaseRepository<AccountRecord>(context), IAccountRecordRepository;
+    : BaseRepository<Payment>(context), IAccountRecordRepository;

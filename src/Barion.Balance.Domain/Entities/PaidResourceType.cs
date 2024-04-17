@@ -8,7 +8,7 @@ public class PaidResourceType : BaseAuditableEntity
 
     public ICollection<Hold>? Holds { get; set; }
 
-    public ICollection<AccountRecord>? AccountRecords { get; set; }
+    public ICollection<Payment>? Payments { get; set; }
 
     public ICollection<PaymentSystemWidgetGeneration>? PaymentSystemWidgetGenerations { get; set; }
 }

@@ -13,7 +13,7 @@ public class BalanceDbContext : DbContext, IBalanceDbContext
     
 
     public DbSet<PaymentMethod> PaymentMethods { get; set; }
-    public DbSet<AccountRecord> AccountRecords { get; set; }
+    public DbSet<Payment> AccountRecords { get; set; }
     public DbSet<Hold> Holds { get; set; }
     public DbSet<PaymentSystemConfiguration> PaymentSystemConfigurations { get; set; }
     public DbSet<PaymentSystemWidgetGeneration> PaymentSystemWidgetGenerations { get; set; }

@@ -2,4 +2,4 @@ using Barion.Balance.Domain.Entities;
 
 namespace Barion.Balance.Application.Common.Repositories;
 
-public interface IAccountRecordRepository : IBaseRepository<AccountRecord>;
+public interface IAccountRecordRepository : IBaseRepository<Payment>;

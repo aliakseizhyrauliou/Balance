@@ -9,5 +9,7 @@ public class PaidResourseTypeConfiguration: IEntityTypeConfiguration<PaidResourc
     public void Configure(EntityTypeBuilder<PaidResourceType> builder)
     {
         builder.ShowOnlyNotDeleted();
+        
+        
     }
 }

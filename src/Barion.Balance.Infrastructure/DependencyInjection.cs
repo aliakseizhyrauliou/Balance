@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using BePaidService = Barion.Balance.Infrastructure.External.BePaid.Services.BePaidService;
 using IPaymentMethodRepository = Barion.Balance.Application.Common.Repositories.IPaymentMethodRepository;
 
 namespace Barion.Balance.Infrastructure;
