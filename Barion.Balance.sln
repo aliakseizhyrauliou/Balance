@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barion.Balance.Infrastructu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barion.Balance.Web", "src\Barion.Balance.Web\Barion.Balance.Web.csproj", "{4888A340-4486-492F-A50E-2DC760256417}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barion.Balance.UseCases", "src\Barion.Balance.UseCases\Barion.Balance.UseCases.csproj", "{D080F56F-1A68-468B-BB3B-6B36C72C791C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{4888A340-4486-492F-A50E-2DC760256417}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4888A340-4486-492F-A50E-2DC760256417}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4888A340-4486-492F-A50E-2DC760256417}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D080F56F-1A68-468B-BB3B-6B36C72C791C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D080F56F-1A68-468B-BB3B-6B36C72C791C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D080F56F-1A68-468B-BB3B-6B36C72C791C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D080F56F-1A68-468B-BB3B-6B36C72C791C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

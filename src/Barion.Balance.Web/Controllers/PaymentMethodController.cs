@@ -1,6 +1,7 @@
 using Barion.Balance.Application.PaymentMethods.Commands;
 using Barion.Balance.Application.PaymentMethods.Queries;
-using Barion.Balance.Application.PaymentSystemWidgetGenerations.Commands;
+using Barion.Balance.Application.PaymentSystemWidgetGenerations.Queries;
+using Barion.Balance.UseCases.PaymentSystemWidgets.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,15 +10,28 @@ namespace Barion.Balance.Web.Controllers;
 /// <summary>
 /// Интерфейс для работы с картами
 /// </summary>
-public class PaymentMethodController(ISender sender, IMediator mediator) 
-    : MediatrController(sender, mediator)
+public class PaymentMethodController(ISender sender, 
+    IMediator mediator,
+    IPaymentSystemWidgetUseCase paymentSystemWidgetUseCase) : MediatrController(sender, mediator)
 {
-    [HttpPost("create")]
-    public async Task Create(CancellationToken cancellationToken)
+
+    /// <summary>
+    /// Создать ссылку для привязки карты
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpPost("generateCreateMethodPaymentSystemWidget")]
+    public async Task<CheckoutDto> GenerateCreateMethodPaymentSystemWidget(CancellationToken cancellationToken)
     {
-        await _sender.Send(new CreatePaymentSystemWidgetGenerationCommand(), cancellationToken);
+        return await paymentSystemWidgetUseCase.GeneratePaymentSystemWidget(cancellationToken);
     }
     
+    /// <summary>
+    /// Получить карту по id
+    /// </summary>
+    /// <param name="query"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     [HttpGet("getById")]
     public async Task<PaymentMethodDto> GetById([FromQuery]GetPaymentMethodByIdQuery query, 
         CancellationToken cancellationToken)

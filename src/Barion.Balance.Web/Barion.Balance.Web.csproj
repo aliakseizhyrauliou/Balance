@@ -9,8 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Barion.Balance.Application\Barion.Balance.Application.csproj" />
-      <ProjectReference Include="..\Barion.Balance.Infrastructure\Barion.Balance.Infrastructure.csproj" />
+      <ProjectReference Include="..\Barion.Balance.UseCases\Barion.Balance.UseCases.csproj" />
     </ItemGroup>
 
     <ItemGroup>
