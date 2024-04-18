@@ -22,8 +22,7 @@ public record MakeHoldCommand : IRequest<int>
     
     public required int PaymentMethodId { get; set; }
 
-    [JsonProperty]
-    public string? AdditionalData { get; set; }
+    public Dictionary<string, string>? AdditionalData { get; set; }
 }
 
 public class MakeHoldCommandValidator : AbstractValidator<MakeHoldCommand>
@@ -74,7 +73,8 @@ public sealed class MakeHoldCommandHandler(IPaymentSystemService paymentSystemSe
             Amount = request.Amount,
             PaidResourceTypeId = request.PaidResourceTypeId,
             PaymentSystemTransactionId = null,
-            AdditionalData = request.AdditionalData
+            AdditionalData = JsonConvert.SerializeObject(request.AdditionalData),
+            ReceiptUrl = null,
         };
         
         //Данный метод ничего не сохранаяет в базу, это не его ответственность

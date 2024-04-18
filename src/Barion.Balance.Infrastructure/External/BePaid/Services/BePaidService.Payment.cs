@@ -37,14 +37,17 @@ public partial class BePaidService
         Payment payment)
     {
         var paymentSystemTransactionId = transaction.Transaction.Id!;
-        payment.PaymentSystemFinancialTransactionId = paymentSystemTransactionId;
+        var receiptUrl = transaction.Transaction.ReceiptUrl;
+
         payment.IsSuccess = true;
+        payment.ReceiptUrl = receiptUrl;
+        payment.PaymentSystemFinancialTransactionId = paymentSystemTransactionId;
 
         return new ProcessPaymentPaymentSystemResult
         {
             IsOk = true,
             PaymentSystemTransactionId = paymentSystemTransactionId,
-            AccountRecord = payment
+            Payment = payment
         };
     }
 

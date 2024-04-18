@@ -25,6 +25,8 @@ public partial class BePaidService
     private ProcessCaptureHoldPaymentSystemResult ProcessSuccessfulCaptureHoldStatus(TransactionRoot transaction,
         Hold capturedHold)
     {
+        var receiptUrl = transaction.Transaction.ReceiptUrl;
+
         capturedHold.IsCaptured = true;
 
         return new ProcessCaptureHoldPaymentSystemResult
@@ -41,7 +43,8 @@ public partial class BePaidService
                 IsSuccess = true,
                 PaymentMethodId = capturedHold.PaymentMethodId,
                 AdditionalData = capturedHold.AdditionalData,
-                PaidResourceTypeId = capturedHold.PaidResourceTypeId
+                PaidResourceTypeId = capturedHold.PaidResourceTypeId,
+                ReceiptUrl = receiptUrl
             },
             PaymentSystemTransactionId = transaction.Transaction.Id,
             Hold = capturedHold

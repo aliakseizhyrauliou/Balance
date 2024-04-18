@@ -55,4 +55,7 @@ public class Hold : BaseAuditableEntity
     
     [Column(TypeName = "jsonb")]
     public string? AdditionalData { get; set; }
+
+    
+    public required string ReceiptUrl { get; set; }
 }

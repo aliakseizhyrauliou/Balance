@@ -6,7 +6,7 @@ public class ProcessPaymentPaymentSystemResult
 {
     public bool IsOk { get; set; }
     public string? PaymentSystemTransactionId { get; set; }
-    public Payment? AccountRecord { get; set; }
+    public Payment? Payment { get; set; }
     public string ErrorMessage { get; set; }
     public string FriendlyErrorMessage { get; set; }
 }

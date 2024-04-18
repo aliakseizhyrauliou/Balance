@@ -8,7 +8,7 @@ namespace Barion.Balance.Application.Common.Interfaces;
 public interface IBalanceDbContext
 {
     DbSet<PaymentMethod> PaymentMethods { get; set; }
-    DbSet<Payment> AccountRecords { get; set; }
+    DbSet<Payment> Payments { get; set; }
     DbSet<Hold> Holds { get; set; }
     DbSet<PaymentSystemConfiguration> PaymentSystemConfigurations { get; set; }
     DbSet<PaymentSystemWidgetGeneration> PaymentSystemWidgetGenerations { get; set; }

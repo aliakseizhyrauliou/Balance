@@ -36,8 +36,11 @@ public partial class BePaidService
 
     private ProcessHoldPaymentSystemResult ProcessSuccessfulHoldStatus(TransactionRoot transaction, Hold hold)
     {
+        var receiptUrl = transaction.Transaction.ReceiptUrl;
+        
         hold.PaymentSystemTransactionId = transaction.Transaction.Id;
-
+        hold.ReceiptUrl = receiptUrl;
+        
         return new ProcessHoldPaymentSystemResult
         {
             IsOk = true,

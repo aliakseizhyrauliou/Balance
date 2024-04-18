@@ -56,4 +56,6 @@ public class Payment : BaseAuditableEntity
 
     public required int PaidResourceTypeId { get; set; }
     public PaidResourceType PaidResourceType { get; set; }
+    
+    public required string ReceiptUrl { get; set; }
 }

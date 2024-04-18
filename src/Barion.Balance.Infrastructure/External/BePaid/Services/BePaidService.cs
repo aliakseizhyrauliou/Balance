@@ -128,7 +128,7 @@ public partial class BePaidService(
         var modelForSending = BePaidModelBuilderHelper.BuildParentIdModel(captureHold.PaymentSystemTransactionId,
             (int)captureHold.Amount * 100);
 
-        var httpMessage = BuildHttpRequestMessage(modelForSending, HttpMethod.Post, configuration.Urls.VoidHold.Url);
+        var httpMessage = BuildHttpRequestMessage(modelForSending, HttpMethod.Post, configuration.Urls.CaptureHoldUrl.Url);
 
         var sendResult = await SendMessageAndCast<TransactionRoot>(httpMessage, cancellationToken);
 

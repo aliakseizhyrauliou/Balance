@@ -7,13 +7,11 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Barion.Balance.Infrastructure.Data;
 
-public class BalanceDbContext : DbContext, IBalanceDbContext
+public class BalanceDbContext(DbContextOptions<BalanceDbContext> options)
+    : DbContext(options), IBalanceDbContext
 {
-    public BalanceDbContext(DbContextOptions<BalanceDbContext> options) : base(options) { }
-    
-
     public DbSet<PaymentMethod> PaymentMethods { get; set; }
-    public DbSet<Payment> AccountRecords { get; set; }
+    public DbSet<Payment> Payments { get; set; }
     public DbSet<Hold> Holds { get; set; }
     public DbSet<PaymentSystemConfiguration> PaymentSystemConfigurations { get; set; }
     public DbSet<PaymentSystemWidgetGeneration> PaymentSystemWidgetGenerations { get; set; }

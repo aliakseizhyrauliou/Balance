@@ -80,44 +80,6 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AccountRecords",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<string>(type: "text", nullable: false),
-                    Amount = table.Column<decimal>(type: "numeric", nullable: false),
-                    PaidResourceId = table.Column<string>(type: "text", nullable: false),
-                    PaymentSystemFinancialTransactionId = table.Column<string>(type: "text", nullable: false),
-                    AdditionalData = table.Column<string>(type: "jsonb", nullable: true),
-                    OperatorId = table.Column<string>(type: "text", nullable: false),
-                    IsSuccess = table.Column<bool>(type: "boolean", nullable: false),
-                    IsBonus = table.Column<bool>(type: "boolean", nullable: false),
-                    PaymentMethodId = table.Column<int>(type: "integer", nullable: false),
-                    PaidResourceTypeId = table.Column<int>(type: "integer", nullable: true),
-                    Created = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    CreatedBy = table.Column<string>(type: "text", nullable: true),
-                    LastModified = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "text", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AccountRecords", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AccountRecords_PaidResourceType_PaidResourceTypeId",
-                        column: x => x.PaidResourceTypeId,
-                        principalTable: "PaidResourceType",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_AccountRecords_PaymentMethods_PaymentMethodId",
-                        column: x => x.PaymentMethodId,
-                        principalTable: "PaymentMethods",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Holds",
                 columns: table => new
                 {
@@ -133,6 +95,7 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                     IsVoided = table.Column<bool>(type: "boolean", nullable: false),
                     PaymentMethodId = table.Column<int>(type: "integer", nullable: false),
                     AdditionalData = table.Column<string>(type: "jsonb", nullable: true),
+                    ReceiptUrl = table.Column<string>(type: "text", nullable: false),
                     Created = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<string>(type: "text", nullable: true),
                     LastModified = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -150,6 +113,46 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Holds_PaymentMethods_PaymentMethodId",
+                        column: x => x.PaymentMethodId,
+                        principalTable: "PaymentMethods",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Payments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    Amount = table.Column<decimal>(type: "numeric", nullable: false),
+                    PaidResourceId = table.Column<string>(type: "text", nullable: false),
+                    PaymentSystemFinancialTransactionId = table.Column<string>(type: "text", nullable: false),
+                    AdditionalData = table.Column<string>(type: "jsonb", nullable: true),
+                    OperatorId = table.Column<string>(type: "text", nullable: false),
+                    IsSuccess = table.Column<bool>(type: "boolean", nullable: false),
+                    IsBonus = table.Column<bool>(type: "boolean", nullable: false),
+                    PaymentMethodId = table.Column<int>(type: "integer", nullable: false),
+                    PaidResourceTypeId = table.Column<int>(type: "integer", nullable: false),
+                    ReceiptUrl = table.Column<string>(type: "text", nullable: false),
+                    Created = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    LastModified = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    LastModifiedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Payments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Payments_PaidResourceType_PaidResourceTypeId",
+                        column: x => x.PaidResourceTypeId,
+                        principalTable: "PaidResourceType",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Payments_PaymentMethods_PaymentMethodId",
                         column: x => x.PaymentMethodId,
                         principalTable: "PaymentMethods",
                         principalColumn: "Id",
@@ -198,16 +201,6 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AccountRecords_PaidResourceTypeId",
-                table: "AccountRecords",
-                column: "PaidResourceTypeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AccountRecords_PaymentMethodId",
-                table: "AccountRecords",
-                column: "PaymentMethodId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Holds_PaidResourceTypeId",
                 table: "Holds",
                 column: "PaidResourceTypeId");
@@ -215,6 +208,16 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Holds_PaymentMethodId",
                 table: "Holds",
+                column: "PaymentMethodId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payments_PaidResourceTypeId",
+                table: "Payments",
+                column: "PaidResourceTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payments_PaymentMethodId",
+                table: "Payments",
                 column: "PaymentMethodId");
 
             migrationBuilder.CreateIndex(
@@ -232,10 +235,10 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AccountRecords");
+                name: "Holds");
 
             migrationBuilder.DropTable(
-                name: "Holds");
+                name: "Payments");
 
             migrationBuilder.DropTable(
                 name: "PaymentSystemWidgetGenerations");

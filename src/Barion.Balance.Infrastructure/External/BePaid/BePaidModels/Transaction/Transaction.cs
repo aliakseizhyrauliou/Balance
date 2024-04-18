@@ -1,9 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Transaction
 {
@@ -36,6 +31,8 @@ namespace Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Transaction
         [JsonProperty(PropertyName = "amount")]
         public int Amount { get; set; }
 
+        [JsonProperty(PropertyName = "receipt_url")]
+        public string ReceiptUrl { get; set; }
 
     }
 }

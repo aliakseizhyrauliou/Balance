@@ -19,14 +19,14 @@ public static class BePaidModelBuilderHelper
     {
         return new CreateTransactionRoot
         {
-            Request = new CreateTransaction()
+            Request = new CreateTransaction
             {
-                Amount = amount,
+                Amount = BePaidAmountConverterHelper.ConvertToBePaidFormat(amount),
                 Currency = "BYN",
                 Description = "Платеж",
                 Language = "ru",
                 Test = true,
-                CreditCard = new CreateTransactionCreditCard()
+                CreditCard = new CreateTransactionCreditCard
                 {
                     Token = cardToken
                 }
@@ -35,9 +35,9 @@ public static class BePaidModelBuilderHelper
     }
     public static ParentIdRoot BuildParentIdModel(string parentId, int amount)
     {
-        return new ParentIdRoot()
+        return new ParentIdRoot
         {
-            Request = new ParentIdRequest()
+            Request = new ParentIdRequest
             {
                 ParentId = parentId,
                 Amount = amount
@@ -53,7 +53,7 @@ public static class BePaidModelBuilderHelper
         {
             Request = new CreateTransaction
             {
-                Amount = (int)hold.Amount * 100,
+                Amount = BePaidAmountConverterHelper.ConvertToBePaidFormat(hold.Amount),
                 Currency = "BYN",
                 Description = "HOLD",
                 TrackingId = hold.Id.ToString(),
@@ -104,8 +104,8 @@ public static class BePaidModelBuilderHelper
                     AdditionalData = new AdditionalData
                     {
                         ReceiptText = configuration.CheckoutAuthorization.Order.AdditionalData.ReceiptText,
-                        Contract = configuration.CheckoutAuthorization.Order.AdditionalData.Contract,
-                    },
+                        Contract = configuration.CheckoutAuthorization.Order.AdditionalData.Contract
+                    }
                 },
                 PaymentMethod = new PaymentMethod
                 {

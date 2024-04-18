@@ -5,6 +5,7 @@ using Barion.Balance.Domain.Entities;
 using Barion.Balance.Domain.Exceptions;
 using Barion.Balance.Domain.Services;
 using MediatR;
+using Newtonsoft.Json;
 
 namespace Barion.Balance.Application.Payments;
 
@@ -13,30 +14,29 @@ public class CreatePaymentCommand : IRequest
     /// <summary>
     /// Идентификатор пользователя 
     /// </summary>
-    public required string UserId { get; set; }
+    public  string UserId { get; set; }
 
     /// <summary>
     /// Сумма платежа
     /// </summary>
-    public required decimal Amount { get; set; }
+    public  decimal Amount { get; set; }
 
     /// <summary>
     ///Id того, за что была оплата
     ///Id бронирования, зарядки или парковки
     /// </summary>
-    public required string PaidResourceId { get; set; }
+    public  string PaidResourceId { get; set; }
 
     /// <summary>
     /// Специфическая инфа платежа.
     /// </summary>
-    [Column(TypeName = "jsonb")]
-    public string? AdditionalData { get; set; }
-
+    public Dictionary<string, string>? AdditionalData { get; set; }
+    
 
     /// <summary>
     /// Получатель суммы транзакции
     /// </summary>
-    public required string OperatorId { get; set; }
+    public  string OperatorId { get; set; }
 
 
     /// <summary>
@@ -47,9 +47,9 @@ public class CreatePaymentCommand : IRequest
     /// <summary>
     /// Id платежного метода
     /// </summary>
-    public required int PaymentMethodId { get; set; }
+    public  int PaymentMethodId { get; set; }
 
-    public required int PaidResourceTypeId { get; set; }
+    public  int PaidResourceTypeId { get; set; }
 }
 
 public class CreatePaymentCommandHandler(IPaymentSystemService paymentSystemService,
@@ -80,14 +80,15 @@ public class CreatePaymentCommandHandler(IPaymentSystemService paymentSystemServ
             OperatorId = request.OperatorId,
             PaymentMethodId = request.PaymentMethodId,
             PaidResourceTypeId = request.PaymentMethodId,
-            AdditionalData = request.AdditionalData,
+            AdditionalData = JsonConvert.SerializeObject(request.AdditionalData),
+            ReceiptUrl = null
         };
 
         var paymentResult = await paymentSystemService.Payment(accountRecord, paymentMethod, cancellationToken);
 
-        if (paymentResult is not {IsOk: true, AccountRecord: not null})
+        if (paymentResult is not {IsOk: true, Payment: not null})
             throw new PaymentSystemException(paymentResult.FriendlyErrorMessage);
 
-        await accountRecordRepository.InsertAsync(paymentResult.AccountRecord!, cancellationToken);
+        await accountRecordRepository.InsertAsync(paymentResult.Payment!, cancellationToken);
     }
 }

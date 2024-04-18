@@ -41,6 +41,8 @@ public class AuditableEntityInterceptor(TimeProvider dateTime,
             {
                 entry.Entity.CreatedBy = _user.Id;
                 entry.Entity.Created = utcNow;
+                entry.Entity.LastModifiedBy = _user.Id;
+                entry.Entity.LastModified = utcNow;
             }
             else if (entry.State == EntityState.Deleted)
             {
