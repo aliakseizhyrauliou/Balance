@@ -13,16 +13,16 @@ public class PaidResourceTypeConfiguration: IEntityTypeConfiguration<PaidResourc
         builder.HasMany(x => x.Payments)
             .WithOne(x => x.PaidResourceType)
             .HasForeignKey(x => x.PaidResourceTypeId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
         
         builder.HasMany(x => x.Holds)
             .WithOne(x => x.PaidResourceType)
             .HasForeignKey(x => x.PaidResourceTypeId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
         
-        builder.HasMany(x => x.PaymentSystemWidgetGenerations)
+        builder.HasMany(x => x.PaymentSystemWidgets)
             .WithOne(x => x.PaidResourceType)
             .HasForeignKey(x => x.PaidResourceTypeId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

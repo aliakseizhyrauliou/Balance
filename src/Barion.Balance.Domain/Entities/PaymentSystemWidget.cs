@@ -1,9 +1,10 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Barion.Balance.Domain.Common;
 using Barion.Balance.Domain.Enums;
 
 namespace Barion.Balance.Domain.Entities;
 
-public class PaymentSystemWidgetGeneration : BaseAuditableEntity
+public class PaymentSystemWidget : BaseAuditableEntity
 {
     
     /// <summary>
@@ -25,6 +26,12 @@ public class PaymentSystemWidgetGeneration : BaseAuditableEntity
     /// Причина открытия виджета
     /// </summary>
     public WidgetReason WidgetReason { get; set; }
+    
+    /// <summary>
+    ///Id того, за что была оплата
+    ///Id бронирования, зарядки или парковки
+    /// </summary>
+    public required string PaidResourceId { get; set; }
     
     /// <summary>
     /// Сумма
@@ -63,8 +70,31 @@ public class PaymentSystemWidgetGeneration : BaseAuditableEntity
     public PaymentSystemConfiguration? PaymentSystemConfiguration { get; set; }
 
     /// <summary>
-    /// Тип платежного виджета
+    /// Тип платного ресурса
     /// </summary>
     public int? PaidResourceTypeId { get; set; }
     public PaidResourceType? PaidResourceType { get; set; }
+
+    /// <summary>
+    /// Id холда если есть 
+    /// </summary>
+    public int? HoldId { get; set; }
+    public Hold? Hold { get; set; }
+
+    /// <summary>
+    /// Id платежа
+    /// </summary>
+    public int? PaymentId { get; set; }
+    public Payment? Payment { get; set; }
+    
+    /// <summary>
+    /// Получатель суммы транзакции
+    /// </summary>
+    public required string OperatorId { get; set; }
+    
+    /// <summary>
+    /// Дополнительная информация
+    /// </summary>
+    [Column(TypeName = "jsonb")]
+    public string? AdditionalData { get; set; }
 }

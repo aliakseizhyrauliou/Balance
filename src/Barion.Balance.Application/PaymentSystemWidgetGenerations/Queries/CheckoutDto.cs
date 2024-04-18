@@ -12,7 +12,7 @@ public class CheckoutDto
     {
         public Mapping()
         {
-            CreateMap<PaymentSystemWidgetGeneration, CheckoutDto>();
+            CreateMap<PaymentSystemWidget, CheckoutDto>();
         }
     }
 }

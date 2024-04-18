@@ -10,6 +10,6 @@ public class PaidResourceType : BaseAuditableEntity
 
     public ICollection<Payment>? Payments { get; set; }
 
-    public ICollection<PaymentSystemWidgetGeneration>? PaymentSystemWidgetGenerations { get; set; }
+    public ICollection<PaymentSystemWidget>? PaymentSystemWidgets { get; set; }
     
 }

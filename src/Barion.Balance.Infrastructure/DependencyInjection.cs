@@ -64,6 +64,6 @@ public static class DependencyInjection
         services.AddScoped<IPaymentSystemWidgetGenerationRepository, PaymentSystemWidgetGenerationRepository>();
         services.AddScoped<IPaymentSystemConfigurationRepository, PaymentSystemConfigurationRepository>();
         services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>();
-        services.AddScoped<IAccountRecordRepository, AccountRecordRepository>();
+        services.AddScoped<IPaymentRepository, PaymentRepository>();
     }
 }

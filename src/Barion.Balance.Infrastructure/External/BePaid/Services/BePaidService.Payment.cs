@@ -54,5 +54,42 @@ public partial class BePaidService
             Payment = payment
         };
     }
+    
+    private async Task<ProcessPaymentPaymentSystemWidgetResult> ProcessSuccessfulPaymentWidgetStatus(TransactionRoot concretePaymentSystemObjectResponse,
+        PaymentSystemWidget paymentSystemWidget)
+    {
+        var payment = new Payment
+        {
+            UserId = paymentSystemWidget.UserId,
+            Amount = paymentSystemWidget.Amount,
+            PaidResourceId = paymentSystemWidget.PaidResourceId,
+            PaymentSystemTransactionId = concretePaymentSystemObjectResponse.Transaction.Id,
+            OperatorId = paymentSystemWidget.OperatorId,
+            PaidResourceTypeId = paymentSystemWidget.PaidResourceTypeId,
+            PaymentSystemConfigurationId = paymentSystemWidget.PaymentSystemConfigurationId,
+            ReceiptUrl = concretePaymentSystemObjectResponse.Transaction.ReceiptUrl,
+            AdditionalData = paymentSystemWidget.AdditionalData,
+            IsSuccess = true
+        };
+
+        return new ProcessPaymentPaymentSystemWidgetResult
+        {
+            IsOk = true,
+            PaymentSystemWidget = paymentSystemWidget,
+            Payment = payment
+        };
+    }
+
+    private async Task<ProcessPaymentPaymentSystemWidgetResult> ProcessFailedPaymentWidgetStatus(TransactionRoot concretePaymentSystemObjectResponse, 
+        PaymentSystemWidget widget)
+    {
+        return new ProcessPaymentPaymentSystemWidgetResult
+        {
+            IsOk = false,
+            PaymentSystemWidget = widget,
+            ErrorMessage = concretePaymentSystemObjectResponse.Transaction.Message,
+            FriendlyErrorMessage = concretePaymentSystemObjectResponse.Transaction.Message
+        };
+    }
 
 }

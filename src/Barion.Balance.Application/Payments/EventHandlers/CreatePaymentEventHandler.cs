@@ -10,7 +10,7 @@ public class CreatePaymentEventHandler(IReceiptRepository receiptRepository)
 {
     public async Task Handle(CreatePaymentEvent notification, CancellationToken cancellationToken)
     {
-        var receipt = new Receipt
+            var receipt = new Receipt
         {
             UserId = notification.Payment.UserId,
             PaidResourceId = notification.Payment.PaidResourceId,

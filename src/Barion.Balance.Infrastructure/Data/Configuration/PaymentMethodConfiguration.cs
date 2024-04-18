@@ -13,16 +13,16 @@ public class PaymentMethodConfiguration : IEntityTypeConfiguration<PaymentMethod
         builder.HasMany(x => x.Holds)
             .WithOne(x => x.PaymentMethod)
             .HasForeignKey(x => x.PaymentMethodId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(x => x.Payments)
             .WithOne(x => x.PaymentMethod)
             .HasForeignKey(x => x.PaymentMethodId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(x => x.Receipts)
             .WithOne(x => x.PaymentMethod)
             .HasForeignKey(x => x.PaymentMethodId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

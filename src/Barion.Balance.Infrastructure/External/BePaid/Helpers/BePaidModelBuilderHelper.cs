@@ -68,53 +68,106 @@ public static class BePaidModelBuilderHelper
         };
     }
 
-    public static CheckoutRoot BuildForAuthorizationWithWidget(
+    public static CheckoutRoot BuildWidgetForCreatePaymentMethod(
         BePaidConfiguration configuration,
-        PaymentSystemWidgetGeneration paymentSystemWidgetGeneration)
+        PaymentSystemWidget paymentSystemWidget)
     {
         return new CheckoutRoot
         {
             Checkout = new Checkout
             {
-                Test = configuration.CheckoutAuthorization.Test,
-                TransactionType = configuration.CheckoutAuthorization.TransactionType,
-                Attempts = configuration.CheckoutAuthorization.Attempts,
+                Test = configuration.CheckoutCreatePaymentMethod.Test,
+                TransactionType = configuration.CheckoutCreatePaymentMethod.TransactionType,
+                Attempts = configuration.CheckoutCreatePaymentMethod.Attempts,
                 Settings = new Settings
                 {
-                    ButtonText = configuration.CheckoutAuthorization.Settings.ButtonText,
-                    Language = configuration.CheckoutAuthorization.Settings.Language,
+                    ButtonText = configuration.CheckoutCreatePaymentMethod.Settings.ButtonText,
+                    Language = configuration.CheckoutCreatePaymentMethod.Settings.Language,
                     CustomerFields = new CustomerFields
                     {
-                        Visible = configuration.CheckoutAuthorization.Settings.CustomerFields.Visible,
-                        ReadOnly = configuration.CheckoutAuthorization.Settings.CustomerFields.ReadOnly
+                        Visible = configuration.CheckoutCreatePaymentMethod.Settings.CustomerFields.Visible,
+                        ReadOnly = configuration.CheckoutCreatePaymentMethod.Settings.CustomerFields.ReadOnly
                     },
                     SaveCardToggle = new SaveCardToggle
                     {
-                        Display = configuration.CheckoutAuthorization.Settings.SaveCardToggle.Display,
-                        CustomerContract = configuration.CheckoutAuthorization.Settings.SaveCardToggle.CustomerContract
+                        Display = configuration.CheckoutCreatePaymentMethod.Settings.SaveCardToggle.Display,
+                        CustomerContract = configuration.CheckoutCreatePaymentMethod.Settings.SaveCardToggle.CustomerContract
                     },
-                    NotificationUrl = configuration.CheckoutAuthorization.Settings.NotificationUrl
+                    NotificationUrl = configuration.CheckoutCreatePaymentMethod.Settings.NotificationUrl
                 },
                 Order = new Order
                 {
-                    Currency = configuration.CheckoutAuthorization.Order.Currency,
-                    Amount = configuration.CheckoutAuthorization.Order.Amount,
-                    Description = configuration.CheckoutAuthorization.Order.Description,
-                    TrackingId = paymentSystemWidgetGeneration.Id.ToString()!,
+                    Currency = configuration.CheckoutCreatePaymentMethod.Order.Currency,
+                    Amount = configuration.CheckoutCreatePaymentMethod.Order.Amount,
+                    Description = configuration.CheckoutCreatePaymentMethod.Order.Description,
+                    TrackingId = paymentSystemWidget.Id.ToString()!,
                     AdditionalData = new AdditionalData
                     {
-                        ReceiptText = configuration.CheckoutAuthorization.Order.AdditionalData.ReceiptText,
-                        Contract = configuration.CheckoutAuthorization.Order.AdditionalData.Contract
+                        ReceiptText = configuration.CheckoutCreatePaymentMethod.Order.AdditionalData.ReceiptText,
+                        Contract = configuration.CheckoutCreatePaymentMethod.Order.AdditionalData.Contract
                     }
                 },
                 PaymentMethod = new PaymentMethod
                 {
-                    ExcludedTypes = configuration.CheckoutAuthorization.PaymentMethod.ExcludedTypes
+                    ExcludedTypes = configuration.CheckoutCreatePaymentMethod.PaymentMethod.ExcludedTypes
                 },
                 Customer = new Customer
                 {
-                    FirstName = paymentSystemWidgetGeneration.FirstName,
-                    LastName = paymentSystemWidgetGeneration.LastName
+                    FirstName = paymentSystemWidget.FirstName,
+                    LastName = paymentSystemWidget.LastName
+                }
+            }
+        };
+    }
+    
+        public static CheckoutRoot BuildWidgetForPayment(
+        BePaidConfiguration configuration,
+        PaymentSystemWidget paymentSystemWidget,
+        int amount)
+    {
+        return new CheckoutRoot
+        {
+            Checkout = new Checkout
+            {
+                Test = configuration.CheckoutPayment.Test,
+                TransactionType = configuration.CheckoutPayment.TransactionType,
+                Attempts = configuration.CheckoutPayment.Attempts,
+                Settings = new Settings
+                {
+                    ButtonText = configuration.CheckoutPayment.Settings.ButtonText,
+                    Language = configuration.CheckoutPayment.Settings.Language,
+                    CustomerFields = new CustomerFields
+                    {
+                        Visible = configuration.CheckoutPayment.Settings.CustomerFields.Visible,
+                        ReadOnly = configuration.CheckoutPayment.Settings.CustomerFields.ReadOnly
+                    },
+                    SaveCardToggle = new SaveCardToggle
+                    {
+                        Display = configuration.CheckoutPayment.Settings.SaveCardToggle.Display,
+                        CustomerContract = configuration.CheckoutPayment.Settings.SaveCardToggle.CustomerContract
+                    },
+                    NotificationUrl = configuration.CheckoutPayment.Settings.NotificationUrl
+                },
+                Order = new Order
+                {
+                    Currency = configuration.CheckoutPayment.Order.Currency,
+                    Amount = amount,
+                    Description = configuration.CheckoutPayment.Order.Description,
+                    TrackingId = paymentSystemWidget.Id.ToString()!,
+                    AdditionalData = new AdditionalData
+                    {
+                        ReceiptText = configuration.CheckoutPayment.Order.AdditionalData.ReceiptText,
+                        Contract = configuration.CheckoutPayment.Order.AdditionalData.Contract
+                    }
+                },
+                PaymentMethod = new PaymentMethod
+                {
+                    ExcludedTypes = configuration.CheckoutPayment.PaymentMethod.ExcludedTypes
+                },
+                Customer = new Customer
+                {
+                    FirstName = paymentSystemWidget.FirstName,
+                    LastName = paymentSystemWidget.LastName
                 }
             }
         };

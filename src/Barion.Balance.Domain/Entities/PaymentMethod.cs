@@ -55,7 +55,7 @@ public class PaymentMethod : BaseAuditableEntity
     /// <summary>
     /// Токен платежной системы
     /// </summary>
-    public required string PaymentSystemToken { get; set; }
+    public string? PaymentSystemToken { get; set; }
 
 
     public ICollection<Receipt>? Receipts { get; set; }

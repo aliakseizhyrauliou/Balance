@@ -8,7 +8,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddUseCases(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddScoped<IPaymentSystemWidgetUseCase, PaymentSystemWidgetUseCase>();
+        serviceCollection.AddScoped<IWidgetUseCase, WidgetUseCase>();
         
         return serviceCollection;
     }

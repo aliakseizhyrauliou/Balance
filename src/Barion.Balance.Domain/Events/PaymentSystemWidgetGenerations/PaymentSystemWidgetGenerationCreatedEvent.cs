@@ -3,8 +3,8 @@ using Barion.Balance.Domain.Entities;
 
 namespace Barion.Balance.Domain.Events.PaymentSystemWidgetGenerations;
 
-public class PaymentSystemWidgetGenerationCreatedEvent(PaymentSystemWidgetGeneration paymentSystemWidgetGeneration)
+public class PaymentSystemWidgetGenerationCreatedEvent(PaymentSystemWidget paymentSystemWidget)
     : BaseEvent
 {
-    public PaymentSystemWidgetGeneration PaymentSystemWidgetGeneration { get; set; } = paymentSystemWidgetGeneration;
+    public PaymentSystemWidget PaymentSystemWidget { get; set; } = paymentSystemWidget;
 }

@@ -57,7 +57,7 @@ public class CreatePaymentCommandHandler(IPaymentSystemService paymentSystemServ
     IPaidResourceTypeRepository paidResourceTypeRepository,
     IPaymentMethodRepository paymentMethodRepository,
     IPaymentSystemConfigurationRepository paymentSystemConfigurationRepository,
-    IAccountRecordRepository paymentsRepository) : IRequestHandler<CreatePaymentCommand>
+    IPaymentRepository paymentsRepository) : IRequestHandler<CreatePaymentCommand>
 {
     public async Task Handle(CreatePaymentCommand request, CancellationToken cancellationToken)
     {

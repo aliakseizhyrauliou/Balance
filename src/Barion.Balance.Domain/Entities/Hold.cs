@@ -13,9 +13,9 @@ public class Hold : BaseAuditableEntity
     /// <summary>
     /// Тип платного ресурса
     /// </summary>
-    public int PaidResourceTypeId { get; set; }
+    public int? PaidResourceTypeId { get; set; }
 
-    public PaidResourceType PaidResourceType { get; set; }
+    public PaidResourceType? PaidResourceType { get; set; }
 
     /// <summary>
     /// Id того, за что платим
@@ -52,9 +52,9 @@ public class Hold : BaseAuditableEntity
     /// <summary>
     /// Id платежного метода
     /// </summary>
-    public required int PaymentMethodId { get; set; }
+    public int? PaymentMethodId { get; set; }
 
-    public PaymentMethod PaymentMethod { get; set; }
+    public PaymentMethod? PaymentMethod { get; set; }
 
 
     /// <summary>
@@ -75,6 +75,19 @@ public class Hold : BaseAuditableEntity
     /// <summary>
     /// Id чека
     /// </summary>
-    public string ReceiptUrl { get; set; }
+    public string ReceiptUrl { get; set; } = null!;
+
+    /// <summary>
+    /// Id платежа который создало удержание данного холда
+    /// </summary>
+    public int? HoldCaptureCreatedPaymentId { get; set; }
+    public Payment?  HoldCaptureCreatedPayment { get; set; }
     
+    
+    /// <summary>
+    /// Идентификатор платежного виджета если есть
+    /// </summary>
+    public int? PaymentSystemWidgetGenerationId { get; set; }
+    
+    public PaymentSystemWidget? PaymentSystemWidget { get; set; }
 }

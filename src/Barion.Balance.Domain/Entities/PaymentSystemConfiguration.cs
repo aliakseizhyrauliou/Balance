@@ -20,7 +20,7 @@ public class PaymentSystemConfiguration : BaseAuditableEntity
     /// <summary>
     /// Информация об открытии виджета в платежной системе
     /// </summary>
-    public ICollection<PaymentSystemWidgetGeneration>? PaymentSystemWidgetGenerations { get; set; }
+    public ICollection<PaymentSystemWidget>? PaymentSystemWidgets { get; set; }
 
     /// <summary>
     /// Холды платежной системы
@@ -31,12 +31,12 @@ public class PaymentSystemConfiguration : BaseAuditableEntity
     /// <summary>
     /// Платежи платежной системы
     /// </summary>
-    public ICollection<Payment> Payments { get; set; }
+    public ICollection<Payment>? Payments { get; set; }
 
     /// <summary>
     /// Чеки платежной системы
     /// </summary>
-    public ICollection<Receipt> Receipts { get; set; }
+    public ICollection<Receipt>? Receipts { get; set; }
 
     
     /// <summary>

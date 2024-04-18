@@ -20,7 +20,7 @@ public class PaymentSystemWidgetGenerationCreatedEventHandler(ILogger<PaymentSys
     {
         try
         {
-            await repository.DisableAllUserWidgetsAsync(notification.PaymentSystemWidgetGeneration.UserId,
+            await repository.DisableAllUserWidgetsAsync(notification.PaymentSystemWidget.UserId,
                 cancellationToken);
         }
         catch (Exception ex)

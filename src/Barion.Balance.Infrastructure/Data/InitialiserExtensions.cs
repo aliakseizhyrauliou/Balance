@@ -69,7 +69,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
             return;
         }
 
-        var bePaidConfiguration = new BePaidConfiguration()
+        var bePaidConfiguration = new BePaidConfiguration
         {
             Urls = new Urls
             {
@@ -117,7 +117,8 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
                 {
                     ButtonText = "Привязать карту",
                     Language = "RU",
-                    NotificationUrl = "https://8785-134-17-4-170.ngrok-free.app/api/BePaid/verifyPaymentMethodNotification",
+                    NotificationUrl =
+                        "https://bd3f-46-28-96-178.ngrok-free.app/api/BePaid/verifyHoldNotification",
                     SaveCardToggle = new SaveCardToggle
                     {
                         Display = true,
@@ -129,8 +130,8 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
                         ReadOnly = ["first_name", "last_name"]
                     }
                 },
-                
-                
+
+
                 Order = new Order
                 {
                     Currency = "BYN",
@@ -141,10 +142,10 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
                         Contract = ["recurring", "card_on_file"],
                         ReceiptText = ["Карта успешно привязана к системе Barion"]
                     },
-                    
+
                     TrackingId = null
                 },
-                
+
                 Test = true,
                 PaymentMethod = new PaymentMethod
                 {
@@ -155,7 +156,105 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
                     FirstName = "Default FirstName",
                     LastName = "Default LastName"
                 }
-            }
+            },
+            CheckoutPayment = new Checkout
+            {
+                Attempts = 1,
+                TransactionType = TransactionTypes.Payment,
+                Settings = new Settings
+                {
+                    ButtonText = "Оплата",
+                    Language = "RU",
+                    NotificationUrl =
+                        "https://bd3f-46-28-96-178.ngrok-free.app/api/BePaid/verifyPaymentNotification",
+                    SaveCardToggle = new SaveCardToggle
+                    {
+                        Display = true,
+                        CustomerContract = true
+                    },
+                    CustomerFields = new CustomerFields
+                    {
+                        Visible = ["email"],
+                        ReadOnly = []
+                    }
+                },
+
+
+                Order = new Order
+                {
+                    Currency = "BYN",
+                    Amount = 0,
+                    Description = "Продолжите для оплаты",
+                    AdditionalData = new AdditionalData
+                    {
+                        Contract = ["oneclick"],
+                        ReceiptText = ["Успешно оплачено"]
+                    },
+
+                    TrackingId = null
+                },
+
+                Test = true,
+                PaymentMethod = new PaymentMethod
+                {
+                    ExcludedTypes = ["erip", "halva"]
+                },
+                Customer = new Customer
+                {
+                    FirstName = "Default FirstName",
+                    LastName = "Default LastName"
+                },
+            },
+            CheckoutCreatePaymentMethod = new Checkout
+            {
+                Attempts = 1,
+                TransactionType = TransactionTypes.Authorization,
+                Settings = new Settings
+                {
+                    ButtonText = "Привязать карту",
+                    Language = "RU",
+                    NotificationUrl =
+                        "https://bd3f-46-28-96-178.ngrok-free.app/api/BePaid/verifyPaymentMethodNotification",
+                    SaveCardToggle = new SaveCardToggle
+                    {
+                        Display = true,
+                        CustomerContract = true
+                    },
+                    CustomerFields = new CustomerFields
+                    {
+                        Visible = ["email", "first_name", "last_name"],
+                        ReadOnly = ["first_name", "last_name"]
+                    }
+                },
+
+
+                Order = new Order
+                {
+                    Currency = "BYN",
+                    Amount = 0,
+                    Description = "Продолжите для привязки карты к системe Barion",
+                    AdditionalData = new AdditionalData
+                    {
+                        Contract = ["recurring", "card_on_file"],
+                        ReceiptText = ["Карта успешно привязана к системе Barion"]
+                    },
+
+                    TrackingId = null
+                },
+
+                Test = true,
+                PaymentMethod = new PaymentMethod
+                {
+                    ExcludedTypes = ["erip", "halva"]
+                },
+                Customer = new Customer
+                {
+                    FirstName = "Default FirstName",
+                    LastName = "Default LastName"
+                }
+            },
+            DefaultCurrency = "BYN",
+            DefaultLanguage = "RU"
         };
 
         var configurationModel = new PaymentSystemConfiguration()
@@ -164,7 +263,6 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
             IsCurrentSchema = true,
             Data = JsonConvert.SerializeObject(bePaidConfiguration)
         };
-
 
         balanceDbContext.PaymentSystemConfigurations.Add(configurationModel);
         balanceDbContext.SaveChanges();

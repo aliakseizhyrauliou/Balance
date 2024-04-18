@@ -35,7 +35,7 @@ public class Receipt : BaseAuditableEntity
     /// Карта
     /// </summary>
     public int? PaymentMethodId { get; set; }
-    public PaymentMethod PaymentMethod { get; set; }
+    public PaymentMethod? PaymentMethod { get; set; }
 
 
     /// <summary>

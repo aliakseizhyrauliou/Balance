@@ -10,24 +10,24 @@ public class PaymentSystemConfigurationConfiguration : IEntityTypeConfiguration<
     {
         builder.ShowOnlyNotDeleted();
 
-        builder.HasMany(x => x.PaymentSystemWidgetGenerations)
+        builder.HasMany(x => x.PaymentSystemWidgets)
             .WithOne(x => x.PaymentSystemConfiguration)
             .HasForeignKey(x => x.PaymentSystemConfigurationId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(x => x.Holds)
             .WithOne(x => x.PaymentSystemConfiguration)
             .HasForeignKey(x => x.PaymentSystemConfigurationId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(x => x.Payments)
             .WithOne(x => x.PaymentSystemConfiguration)
             .HasForeignKey(x => x.PaymentSystemConfigurationId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(x => x.Receipts)
             .WithOne(x => x.PaymentSystemConfiguration)
             .HasForeignKey(x => x.PaymentSystemConfigurationId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

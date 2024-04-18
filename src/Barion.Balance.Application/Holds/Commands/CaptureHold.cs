@@ -27,7 +27,7 @@ public class CaptureHoldCommandValidator : AbstractValidator<CaptureHoldCommand>
 public class CaptureHoldCommandHandler(IPaymentSystemService paymentSystemService, 
     IPaymentSystemConfigurationRepository paymentSystemConfigurationRepository,
     IHoldRepository holdRepository,
-    IAccountRecordRepository paymentRepository) 
+    IPaymentRepository paymentRepository) 
     : IRequestHandler<CaptureHoldCommand>
 {
     public async Task Handle(CaptureHoldCommand request, CancellationToken cancellationToken)

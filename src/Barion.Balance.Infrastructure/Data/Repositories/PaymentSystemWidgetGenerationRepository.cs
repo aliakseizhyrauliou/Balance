@@ -5,10 +5,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Barion.Balance.Infrastructure.Data.Repositories;
 
-public class PaymentSystemWidgetGenerationRepository(IBalanceDbContext context) : BaseRepository<PaymentSystemWidgetGeneration>(context), 
+public class PaymentSystemWidgetGenerationRepository(IBalanceDbContext context) : BaseRepository<PaymentSystemWidget>(context), 
     IPaymentSystemWidgetGenerationRepository
 {
-    public async Task<PaymentSystemWidgetGeneration?> GetActiveAsync(string userId, 
+    public async Task<PaymentSystemWidget?> GetActiveAsync(string userId, 
         CancellationToken cancellationToken = default)
     {
         return await dbSet.SingleOrDefaultAsync(x => x.UserId == userId &&

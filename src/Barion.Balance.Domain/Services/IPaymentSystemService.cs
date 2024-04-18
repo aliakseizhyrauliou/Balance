@@ -14,27 +14,41 @@ public interface IPaymentSystemService
     /// <returns></returns>
     Task<int> GetWidgetId(string jsonResponse, 
         CancellationToken cancellationToken);
-    
+
     /// <summary>
     /// Сделать запрос на платежную систему и создать виджет
     /// </summary>
-    /// <param name="paymentSystemWidgetGeneration"></param>
+    /// <param name="paymentSystemWidget"></param>
+    /// <param name="paymentSystemConfiguration"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<string> GeneratePaymentSystemWidget(PaymentSystemWidgetGeneration paymentSystemWidgetGeneration,
+    Task<string> GeneratePaymentSystemWidget(PaymentSystemWidget paymentSystemWidget,
+        PaymentSystemConfiguration paymentSystemConfiguration,
         CancellationToken cancellationToken);
 
     /// <summary>
-    /// Обработать веб-хук запрос после отправки формы на виджете платежной системы
+    /// Обработать веб-хук запрос после отправки формы на виджете платежной системы при привязке карты
     /// </summary>
     /// <param name="jsonResponse"></param>
-    /// <param name="widgetGeneration"></param>
+    /// <param name="widget"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<ProcessCreatePaymentMethodPaymentSystemWidgetResult> ProcessCreatePaymentMethodPaymentSystemWidgetResponse(string jsonResponse,
-        PaymentSystemWidgetGeneration widgetGeneration,
+        PaymentSystemWidget widget,
         CancellationToken cancellationToken = default);
-    
+
+
+    /// <summary>
+    /// Обработать веб-хук запрос после отправки формы на виджете платежной системы при платеже
+    /// </summary>
+    /// <param name="jsonResponse"></param>
+    /// <param name="widget"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public Task<ProcessPaymentPaymentSystemWidgetResult> ProcessPaymentSystemWidgetResponse(string jsonResponse,
+        PaymentSystemWidget widget,
+        CancellationToken cancellationToken = default);
+
     /// <summary>
     /// Захолдировать сумму
     /// </summary>

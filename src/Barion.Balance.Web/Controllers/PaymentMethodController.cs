@@ -1,6 +1,7 @@
 using Barion.Balance.Application.PaymentMethods.Commands;
 using Barion.Balance.Application.PaymentMethods.Queries;
 using Barion.Balance.Application.PaymentSystemWidgetGenerations.Queries;
+using Barion.Balance.UseCases.PaymentSystemWidgets.Dtos;
 using Barion.Balance.UseCases.PaymentSystemWidgets.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -12,18 +13,20 @@ namespace Barion.Balance.Web.Controllers;
 /// </summary>
 public class PaymentMethodController(ISender sender, 
     IMediator mediator,
-    IPaymentSystemWidgetUseCase paymentSystemWidgetUseCase) : MediatrController(sender, mediator)
+    IWidgetUseCase widgetUseCase) : MediatrController(sender, mediator)
 {
-
     /// <summary>
     /// Создать ссылку для привязки карты
     /// </summary>
+    /// <param name="operatorId"></param>
+    /// <param name="dto"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    [HttpPost("generateCreateMethodPaymentSystemWidget")]
-    public async Task<CheckoutDto> GenerateCreateMethodPaymentSystemWidget(CancellationToken cancellationToken)
+    [HttpPost("generateCreatePaymentMethodMethodWidget")]
+    public async Task<CheckoutDto> GenerateCreatePaymentMethodMethodWidget([FromBody] GeneratePaymentMethodWidgetDto dto,
+        CancellationToken cancellationToken)
     {
-        return await paymentSystemWidgetUseCase.GeneratePaymentSystemWidget(cancellationToken);
+        return await widgetUseCase.GenerateWidgetForCreatePaymentMethodAsync(dto, cancellationToken);
     }
     
     /// <summary>

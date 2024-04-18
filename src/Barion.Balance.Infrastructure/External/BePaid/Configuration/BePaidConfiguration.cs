@@ -5,7 +5,11 @@ namespace Barion.Balance.Infrastructure.External.BePaid.Configuration;
 public class BePaidConfiguration
 {
     public required Urls Urls { get; set; } 
-    public required Checkout CheckoutAuthorization { get; set; } 
+    public required Checkout CheckoutAuthorization { get; set; }
+    public required Checkout CheckoutPayment { get; set; }
+    public required Checkout CheckoutCreatePaymentMethod { get; set; }
+    public required string DefaultCurrency { get; set; }
+    public required string DefaultLanguage { get; set; }
 }
 
 

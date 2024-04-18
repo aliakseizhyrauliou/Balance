@@ -26,6 +26,11 @@ public partial class BePaidService(
         {
             var concretePaymentSystemObjectResponse = JsonConvert.DeserializeObject<TransactionRoot>(jsonResponse);
 
+            if (concretePaymentSystemObjectResponse is null)
+            {
+                throw new PaymentSystemWidgetException("cannot_parse_widgetId_from_payment_system_webhook_request");
+            }
+
             return int.Parse(concretePaymentSystemObjectResponse.Transaction.TrackingId);
         }
         catch (Exception)
@@ -34,20 +39,24 @@ public partial class BePaidService(
         }
     }
 
-    public async Task<string> GeneratePaymentSystemWidget(PaymentSystemWidgetGeneration paymentSystemWidgetGeneration,
+    public async Task<string> GeneratePaymentSystemWidget(PaymentSystemWidget paymentSystemWidget,
+        PaymentSystemConfiguration paymentSystemConfiguration,
         CancellationToken cancellationToken)
     {
-        return paymentSystemWidgetGeneration.WidgetReason switch
+        return paymentSystemWidget.WidgetReason switch
         {
-            WidgetReason.CreatePaymentMethod => await GenerateAuthorizationWidgetUrl(paymentSystemWidgetGeneration,
+            WidgetReason.CreatePaymentMethod => await GenerateWidgetForCreatePaymentMethod(paymentSystemWidget,
+                paymentSystemConfiguration, cancellationToken),
+            WidgetReason.Payment => await GenerateWidgetForPayment(paymentSystemWidget,
+                paymentSystemConfiguration,
                 cancellationToken),
-            WidgetReason.Payment => throw new NotImplementedException(),
+            WidgetReason.Hold => throw new NotImplementedException(),
             _ => throw new ArgumentOutOfRangeException()
         };
     }
 
     public async Task<ProcessCreatePaymentMethodPaymentSystemWidgetResult>  ProcessCreatePaymentMethodPaymentSystemWidgetResponse(string jsonResponse,
-            PaymentSystemWidgetGeneration paymentSystemWidgetGeneration,
+            PaymentSystemWidget paymentSystemWidget,
             CancellationToken cancellationToken = default)
     {
         var concretePaymentSystemObjectResponse = JsonConvert.DeserializeObject<TransactionRoot>(jsonResponse);
@@ -55,13 +64,33 @@ public partial class BePaidService(
         return concretePaymentSystemObjectResponse!.Transaction.Status switch
         {
             TransactionStatus.Successful => await ProcessSuccessfulCreatePaymentMethodWidgetStatus(
-                concretePaymentSystemObjectResponse, paymentSystemWidgetGeneration),
+                concretePaymentSystemObjectResponse, paymentSystemWidget),
             TransactionStatus.Failed => await ProcessFailedCreatePaymentMethodWidgetStatus(
-                concretePaymentSystemObjectResponse, paymentSystemWidgetGeneration),
+                concretePaymentSystemObjectResponse, paymentSystemWidget),
             TransactionStatus.Expired => await ProcessFailedCreatePaymentMethodWidgetStatus(
-                concretePaymentSystemObjectResponse, paymentSystemWidgetGeneration),
+                concretePaymentSystemObjectResponse, paymentSystemWidget),
             TransactionStatus.Incomplete => await ProcessFailedCreatePaymentMethodWidgetStatus(
-                concretePaymentSystemObjectResponse, paymentSystemWidgetGeneration),
+                concretePaymentSystemObjectResponse, paymentSystemWidget),
+            _ => throw new NotImplementedException()
+        };
+    }
+
+    public async Task<ProcessPaymentPaymentSystemWidgetResult> ProcessPaymentSystemWidgetResponse(string jsonResponse,
+        PaymentSystemWidget widget,
+        CancellationToken cancellationToken = default)
+    {
+        var concretePaymentSystemObjectResponse = JsonConvert.DeserializeObject<TransactionRoot>(jsonResponse);
+
+        return concretePaymentSystemObjectResponse!.Transaction.Status switch
+        {
+            TransactionStatus.Successful => await ProcessSuccessfulPaymentWidgetStatus(
+                concretePaymentSystemObjectResponse, widget),
+            TransactionStatus.Failed => await ProcessFailedPaymentWidgetStatus(
+                concretePaymentSystemObjectResponse, widget),
+            TransactionStatus.Expired => await ProcessFailedPaymentWidgetStatus(
+                concretePaymentSystemObjectResponse, widget),
+            TransactionStatus.Incomplete => await ProcessFailedPaymentWidgetStatus(
+                concretePaymentSystemObjectResponse, widget),
             _ => throw new NotImplementedException()
         };
     }
@@ -146,9 +175,16 @@ public partial class BePaidService(
         return BePaidConfigurationDeserializationHelper.DeserializeToBePaidConfiguration(configurationModel);
     }
     
-    private async Task<BePaidConfiguration?> CastToBePaidConfiguration(PaymentSystemConfiguration configuration)
+    private async Task<BePaidConfiguration> CastToBePaidConfiguration(PaymentSystemConfiguration configuration)
     {
-        return BePaidConfigurationDeserializationHelper.DeserializeToBePaidConfiguration(configuration);
+        var bePaidConfig = BePaidConfigurationDeserializationHelper.DeserializeToBePaidConfiguration(configuration);
+
+        if (bePaidConfig is null)
+        {
+            throw new Exception("cannot_get_payment_system_config");
+        }
+
+        return bePaidConfig;
     }
 
 

@@ -51,25 +51,35 @@ public class Payment : BaseAuditableEntity
     /// <summary>
     /// Id платежного метода
     /// </summary>
-    public required int PaymentMethodId { get; set; }
-    public PaymentMethod PaymentMethod { get; set; }
+    public int? PaymentMethodId { get; set; }
+    public PaymentMethod? PaymentMethod { get; set; }
 
     /// <summary>
     /// Тип платного ресурса(зарядка, парковка и тд...)
     /// </summary>
-    public required int PaidResourceTypeId { get; set; }
-    public PaidResourceType PaidResourceType { get; set; }
+    public int? PaidResourceTypeId { get; set; }
+    public PaidResourceType? PaidResourceType { get; set; }
 
 
     /// <summary>
     /// Id конфигурации платежной системы
     /// </summary>
-    public required int PaymentSystemConfigurationId { get; set; }
-    public PaymentSystemConfiguration PaymentSystemConfiguration { get; set; }
+    public int? PaymentSystemConfigurationId { get; set; }
+    public PaymentSystemConfiguration? PaymentSystemConfiguration { get; set; }
     
+    public string? ReceiptUrl { get; set; }
     
-    public string ReceiptUrl { get; set; }
-
-
     public ICollection<Receipt>? Receipts { get; set; } = new List<Receipt>();
+
+    /// <summary>
+    /// Id холда который породил этот платеж
+    /// </summary>
+    public int? CapturedHoldId { get; set; }
+    public Hold? CapturedHold { get; set; }
+
+    /// <summary>
+    /// Идентификатор платежного виджета если есть
+    /// </summary>
+    public int? PaymentSystemWidgetId { get; set; }
+    public PaymentSystemWidget? PaymentSystemWidgets { get; set; }
 }

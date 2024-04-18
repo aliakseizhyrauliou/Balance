@@ -14,6 +14,11 @@ public class PaymentConfiguration :  IEntityTypeConfiguration<Payment>
         builder.HasMany(x => x.Receipts)
             .WithOne(x => x.Payment)
             .HasForeignKey(x => x.PaymentId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(x => x.PaymentSystemWidgets)
+            .WithOne(x => x.Payment)
+            .HasForeignKey<PaymentSystemWidget>(x => x.PaymentId)
             .OnDelete(DeleteBehavior.Restrict);
     }    
 }

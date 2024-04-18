@@ -6,19 +6,37 @@ using Barion.Balance.Domain.Events.PaymentSystemWidgetGenerations;
 using Barion.Balance.Domain.Services;
 using MediatR;
 using System.Data;
+using Newtonsoft.Json;
+using PaidResourceType = Barion.Balance.Domain.Enums.PaidResourceType;
 
 namespace Barion.Balance.Application.PaymentSystemWidgetGenerations.Commands;
 
-public record CreatePaymentSystemWidgetGenerationCommand : IRequest;
+/// <summary>
+/// Создание виджета
+/// </summary>
+public record CreateWidgetCommand : IRequest
+{
+    public required WidgetReason WidgetReason { get; set; }
+    public required string OperatorId { get; set; }
+    public string? PaidResourceId { get; set; }
+    public string? AdditionalData { get; set; }
 
-public sealed class CreatePaymentSystemWidgetGenerationCommandHandler(
+    public required int PaidResourceTypeId { get; set; }
+
+    public decimal Amount { get; set; }
+}
+
+public sealed class CreateWidgetCommandHandler(
     IPaymentSystemService paymentSystemService,
     IPaymentSystemConfigurationRepository paymentSystemConfigurationRepository,
     IPaymentSystemWidgetGenerationRepository paymentSystemWidgetGenerationRepository,
     IUser currentUserData)
-    : IRequestHandler<CreatePaymentSystemWidgetGenerationCommand>
+    : IRequestHandler<CreateWidgetCommand>
 {
-    public async Task Handle(CreatePaymentSystemWidgetGenerationCommand request,
+    private const string DefaultPaidResourceIdNameInCaseCreatePaymentMethod = "CREATE PAYMENT METHOD";
+    private const string DefaultPaidResourceIdNameInCasePayment = "PAYMENT";
+    
+    public async Task Handle(CreateWidgetCommand request,
         CancellationToken cancellationToken)
     {
         var currentPaymentSchemaConfiguration =
@@ -26,12 +44,13 @@ public sealed class CreatePaymentSystemWidgetGenerationCommandHandler(
 
         if (currentPaymentSchemaConfiguration is null)
         {
-            throw new Exception("current_schema_not_specified");
+            throw new Exception("current_payment_system_configuration_not_found");
         }
 
+        
         //Создам модель, которая отражет причину открытия виджета платежной системы
 
-        var paymentSystemWidgetGeneration = BuildPaymentSystemWidgetGeneration(currentPaymentSchemaConfiguration.Id);
+        var paymentSystemWidgetGeneration = BuildPaymentSystemWidgetGeneration(currentPaymentSchemaConfiguration.Id, request);
 
 
         paymentSystemWidgetGeneration.AddDomainEvent(new PaymentSystemWidgetGenerationCreatedEvent(paymentSystemWidgetGeneration));
@@ -43,7 +62,9 @@ public sealed class CreatePaymentSystemWidgetGenerationCommandHandler(
             await paymentSystemWidgetGenerationRepository.DisableAllUserWidgetsAsync(paymentSystemWidgetGeneration.UserId, cancellationToken);
             await paymentSystemWidgetGenerationRepository.InsertAsync(paymentSystemWidgetGeneration, cancellationToken);
 
-            var url = await paymentSystemService.GeneratePaymentSystemWidget(paymentSystemWidgetGeneration, cancellationToken);
+            var url = await paymentSystemService.GeneratePaymentSystemWidget(paymentSystemWidgetGeneration,
+                currentPaymentSchemaConfiguration,
+                cancellationToken);
 
             paymentSystemWidgetGeneration.Url = url;
             paymentSystemWidgetGeneration.IsSuccess = true;
@@ -59,15 +80,21 @@ public sealed class CreatePaymentSystemWidgetGenerationCommandHandler(
         }
     }
 
-    private PaymentSystemWidgetGeneration BuildPaymentSystemWidgetGeneration(int currentPaymentSystemConfiguration)  
+    private PaymentSystemWidget BuildPaymentSystemWidgetGeneration(int currentPaymentSystemConfiguration,
+        CreateWidgetCommand request)  
     {
-        return new PaymentSystemWidgetGeneration
+        return new PaymentSystemWidget
         {
-            UserId = currentUserData.Id,
-            FirstName = currentUserData.FirstName,
-            LastName = currentUserData.LastName,
-            WidgetReason = WidgetReason.CreatePaymentMethod,
-            PaymentSystemConfigurationId = currentPaymentSystemConfiguration
+            UserId = currentUserData.Id!,
+            FirstName = currentUserData.FirstName!,
+            LastName = currentUserData.LastName!,
+            WidgetReason = request.WidgetReason,
+            PaymentSystemConfigurationId = currentPaymentSystemConfiguration,
+            PaidResourceId = request.PaidResourceId ?? DefaultPaidResourceIdNameInCaseCreatePaymentMethod,
+            OperatorId = request.OperatorId,
+            AdditionalData = request.AdditionalData,
+            PaidResourceTypeId = request.PaidResourceTypeId,
+            Amount = request.Amount
         };
     }
 }

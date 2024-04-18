@@ -6,21 +6,29 @@ using Microsoft.Extensions.Logging;
 
 namespace Barion.Balance.Application.PaymentSystemWidgetGenerations.Commands;
 
-public class ProcessWidgetResponseCommand : IRequest
+/// <summary>
+/// Обработка запроса от BePaid по созданию карты
+/// </summary>
+public class ProcessCreatePaymentMethodWidgetResponseCommand : IRequest
 {
     public string JsonResponse { get; set; }
 }
 
-public sealed class ProcessWidgetResponseCommandHandler(IPaymentSystemService paymentSystemService, 
+public sealed class  ProcessCreatePaymentMethodWidgetResponseCommandHandler(IPaymentSystemService paymentSystemService, 
     IPaymentMethodRepository paymentMethodRepository,
-    ILogger<ProcessWidgetResponseCommandHandler> logger,
-    IPaymentSystemWidgetGenerationRepository repository) : IRequestHandler<ProcessWidgetResponseCommand>
+    ILogger<ProcessCreatePaymentMethodWidgetResponseCommandHandler> logger,
+    IPaymentSystemWidgetGenerationRepository repository) : IRequestHandler<ProcessCreatePaymentMethodWidgetResponseCommand>
 {
-    public async Task Handle(ProcessWidgetResponseCommand request, CancellationToken cancellationToken)
+    public async Task Handle(ProcessCreatePaymentMethodWidgetResponseCommand request, CancellationToken cancellationToken)
     {
         var widgetId = await paymentSystemService.GetWidgetId(request.JsonResponse, cancellationToken);
 
         var dbWidget = await repository.GetByIdAsync(widgetId, CancellationToken.None);
+
+        if (dbWidget is null)
+        {
+            throw new Exception("cannot_find_widget");
+        }
 
         if (dbWidget.IsDisabled)
         {
@@ -38,22 +46,22 @@ public sealed class ProcessWidgetResponseCommandHandler(IPaymentSystemService pa
         }
     }
 
-    private async Task UpdatePaymentWidget(PaymentSystemWidgetGeneration paymentSystemWidgetGeneration, 
+    private async Task UpdatePaymentWidget(PaymentSystemWidget paymentSystemWidget, 
         bool isOk)
     {
-        paymentSystemWidgetGeneration.GotResponseFromPaymentSystem = true;
+        paymentSystemWidget.GotResponseFromPaymentSystem = true;
 
         if (!isOk)
         {
-            paymentSystemWidgetGeneration.IsSuccess = false;
-            paymentSystemWidgetGeneration.IsDisabled = true;
+            paymentSystemWidget.IsSuccess = false;
+            paymentSystemWidget.IsDisabled = true;
         }
         else
         {
-            paymentSystemWidgetGeneration.IsSuccess = true;
-            paymentSystemWidgetGeneration.IsDisabled = true;
+            paymentSystemWidget.IsSuccess = true;
+            paymentSystemWidget.IsDisabled = true;
         }
         
-        await repository.UpdateAsync(paymentSystemWidgetGeneration);
+        await repository.UpdateAsync(paymentSystemWidget);
     }
 }

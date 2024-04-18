@@ -47,7 +47,8 @@ public partial class BePaidService
                 AdditionalData = capturedHold.AdditionalData,
                 PaidResourceTypeId = capturedHold.PaidResourceTypeId,
                 ReceiptUrl = receiptUrl,
-                PaymentSystemConfigurationId = paymentSystemConfiguration.Id
+                PaymentSystemConfigurationId = paymentSystemConfiguration.Id,
+                CapturedHoldId = capturedHold.Id
             },
             PaymentSystemTransactionId = transaction.Transaction.Id,
             Hold = capturedHold
