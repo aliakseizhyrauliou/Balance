@@ -1,4 +1,5 @@
 using Barion.Balance.Application.Payments;
+using Barion.Balance.Application.Payments.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

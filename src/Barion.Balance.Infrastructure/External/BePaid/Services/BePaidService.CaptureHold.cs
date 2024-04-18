@@ -10,12 +10,13 @@ public partial class BePaidService
     private async Task<ProcessCaptureHoldPaymentSystemResult> ProcessCaptureHoldPaymentSystemResponse(
         Hold captureHold,
         TransactionRoot transaction,
+        PaymentSystemConfiguration paymentSystemConfiguration,
         CancellationToken cancellationToken = default)
     {
         return transaction.Transaction.Status switch
         {
             TransactionStatus.Successful => ProcessSuccessfulCaptureHoldStatus(
-                transaction, captureHold),
+                transaction, captureHold, paymentSystemConfiguration),
             TransactionStatus.Failed => ProcessFailedCaptureHoldStatus(
                 transaction, captureHold),
             _ => throw new NotImplementedException()
@@ -23,7 +24,8 @@ public partial class BePaidService
     }
 
     private ProcessCaptureHoldPaymentSystemResult ProcessSuccessfulCaptureHoldStatus(TransactionRoot transaction,
-        Hold capturedHold)
+        Hold capturedHold,
+        PaymentSystemConfiguration paymentSystemConfiguration)
     {
         var receiptUrl = transaction.Transaction.ReceiptUrl;
 
@@ -32,19 +34,20 @@ public partial class BePaidService
         return new ProcessCaptureHoldPaymentSystemResult
         {
             IsOk = true,
-            NeedToCreateAccountRecord = true,
+            NeedToCreatePaymentRecord = true,
             Payment = new Payment
             {
                 UserId = capturedHold.UserId,
                 Amount = capturedHold.Amount,
                 PaidResourceId = capturedHold.PaidResourceId,
-                PaymentSystemFinancialTransactionId = transaction.Transaction.Id,
+                PaymentSystemTransactionId = transaction.Transaction.Id,
                 OperatorId = capturedHold.OperatorId,
                 IsSuccess = true,
                 PaymentMethodId = capturedHold.PaymentMethodId,
                 AdditionalData = capturedHold.AdditionalData,
                 PaidResourceTypeId = capturedHold.PaidResourceTypeId,
-                ReceiptUrl = receiptUrl
+                ReceiptUrl = receiptUrl,
+                PaymentSystemConfigurationId = paymentSystemConfiguration.Id
             },
             PaymentSystemTransactionId = transaction.Transaction.Id,
             Hold = capturedHold

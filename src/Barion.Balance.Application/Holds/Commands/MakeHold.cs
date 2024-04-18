@@ -1,6 +1,8 @@
+using System.Data;
 using Barion.Balance.Application.Common.Exceptions;
 using Barion.Balance.Application.Common.Repositories;
 using Barion.Balance.Domain.Entities;
+using Barion.Balance.Domain.Events.Holds;
 using Barion.Balance.Domain.Exceptions;
 using Barion.Balance.Domain.Services;
 using FluentValidation;
@@ -43,6 +45,8 @@ public class MakeHoldCommandValidator : AbstractValidator<MakeHoldCommand>
 public sealed class MakeHoldCommandHandler(IPaymentSystemService paymentSystemService, 
     IPaymentMethodRepository paymentMethodRepository,
     IHoldRepository repository,
+    IPaymentSystemConfigurationRepository configurationRepository,
+    IReceiptRepository receiptRepository,
     IPaidResourceTypeRepository paidResourceTypeRepository) : IRequestHandler<MakeHoldCommand, int>
 {
     public async Task<int> Handle(MakeHoldCommand request, 
@@ -63,6 +67,12 @@ public sealed class MakeHoldCommandHandler(IPaymentSystemService paymentSystemSe
             throw new NotFoundException("payment_method_was_not_found");
         }
 
+        var currentPaymentSystemConfiguration = await configurationRepository.GetCurrentSchemaAsync(cancellationToken);
+
+        if (currentPaymentSystemConfiguration is null)
+        {
+            throw new Exception("current_payment_system_configuration_not_found");
+        }
         //Создаем модель 
         var domainModel = new Hold
         {
@@ -72,25 +82,41 @@ public sealed class MakeHoldCommandHandler(IPaymentSystemService paymentSystemSe
             OperatorId = request.OperatorId,
             Amount = request.Amount,
             PaidResourceTypeId = request.PaidResourceTypeId,
-            PaymentSystemTransactionId = null,
             AdditionalData = JsonConvert.SerializeObject(request.AdditionalData),
-            ReceiptUrl = null,
+            PaymentSystemConfigurationId = currentPaymentSystemConfiguration.Id
         };
         
         //Данный метод ничего не сохранаяет в базу, это не его ответственность
         //Domain слой вообще не должен быть в курсе, что что-то где-то храниться
-        var makeHoldRequestToPaymentSystemResult = await paymentSystemService.Hold(domainModel, paymentMethod, cancellationToken);
+        var makeHoldRequestToPaymentSystemResult = await paymentSystemService.Hold(domainModel,
+            paymentMethod, 
+            currentPaymentSystemConfiguration, 
+            cancellationToken);
 
         if (makeHoldRequestToPaymentSystemResult is { IsOk: true, Hold: not null })
         {
-            await repository.InsertAsync(makeHoldRequestToPaymentSystemResult.Hold, cancellationToken);
+            var hold = makeHoldRequestToPaymentSystemResult.Hold;
+            
+            await using var transaction = await repository.BeginTransaction(IsolationLevel.ReadCommitted, cancellationToken);
+
+            try
+            {
+                hold.AddDomainEvent(new MakeHoldEvent(hold));
+                await repository.InsertAsync(hold, cancellationToken);
+                
+                await transaction.CommitAsync(cancellationToken);
+            }
+            catch (Exception)
+            {
+                await transaction.RollbackAsync(cancellationToken);
+                throw;
+            }
         }
         else
         {
             throw new PaymentSystemException(makeHoldRequestToPaymentSystemResult.FriendlyErrorMessage);
         }
-
-
+        
         return makeHoldRequestToPaymentSystemResult.Hold.Id;
     }
     

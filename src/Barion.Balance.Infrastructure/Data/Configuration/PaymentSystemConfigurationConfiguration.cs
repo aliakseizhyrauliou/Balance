@@ -13,6 +13,21 @@ public class PaymentSystemConfigurationConfiguration : IEntityTypeConfiguration<
         builder.HasMany(x => x.PaymentSystemWidgetGenerations)
             .WithOne(x => x.PaymentSystemConfiguration)
             .HasForeignKey(x => x.PaymentSystemConfigurationId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(x => x.Holds)
+            .WithOne(x => x.PaymentSystemConfiguration)
+            .HasForeignKey(x => x.PaymentSystemConfigurationId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(x => x.Payments)
+            .WithOne(x => x.PaymentSystemConfiguration)
+            .HasForeignKey(x => x.PaymentSystemConfigurationId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(x => x.Receipts)
+            .WithOne(x => x.PaymentSystemConfiguration)
+            .HasForeignKey(x => x.PaymentSystemConfigurationId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

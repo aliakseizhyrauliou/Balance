@@ -1,6 +1,8 @@
 using System.Data;
 using Barion.Balance.Application.Common.Exceptions;
 using Barion.Balance.Application.Common.Repositories;
+using Barion.Balance.Domain.Events.Holds;
+using Barion.Balance.Domain.Events.Payments;
 using Barion.Balance.Domain.Exceptions;
 using Barion.Balance.Domain.Services;
 using FluentValidation;
@@ -23,8 +25,9 @@ public class CaptureHoldCommandValidator : AbstractValidator<CaptureHoldCommand>
 }
 
 public class CaptureHoldCommandHandler(IPaymentSystemService paymentSystemService, 
+    IPaymentSystemConfigurationRepository paymentSystemConfigurationRepository,
     IHoldRepository holdRepository,
-    IAccountRecordRepository accountRecordRepository) 
+    IAccountRecordRepository paymentRepository) 
     : IRequestHandler<CaptureHoldCommand>
 {
     public async Task Handle(CaptureHoldCommand request, CancellationToken cancellationToken)
@@ -40,31 +43,46 @@ public class CaptureHoldCommandHandler(IPaymentSystemService paymentSystemServic
         {
             throw new InvalidArgumentException("cannot_capture_hold_with_zero_amount");
         }
+        
+        var currentPaymentSystemConfiguration = await paymentSystemConfigurationRepository.GetCurrentSchemaAsync(cancellationToken);
 
-        var captureHoldPaymentSystemResult = await paymentSystemService.CaptureHold(hold, cancellationToken);
+        if (currentPaymentSystemConfiguration is null)
+        {
+            throw new Exception("current_payment_system_configuration_not_found");
+        }
+
+        var captureHoldPaymentSystemResult = await paymentSystemService.CaptureHold(hold, currentPaymentSystemConfiguration, cancellationToken);
 
         if (!captureHoldPaymentSystemResult.IsOk)
             throw new PaymentSystemException(captureHoldPaymentSystemResult.FriendlyErrorMessage);
 
         if (captureHoldPaymentSystemResult is { Hold: null })
             throw new Exception("hold_was_null");
-
-
-        if (captureHoldPaymentSystemResult is {NeedToCreateAccountRecord: true, Payment: not null})
+        
+        
+        if (captureHoldPaymentSystemResult is {NeedToCreatePaymentRecord: true, Payment: not null})
         {
+            var capturedHold = captureHoldPaymentSystemResult.Hold!;
+            var newPayment = captureHoldPaymentSystemResult.Payment!;
+            
             await using var transaction = await holdRepository.BeginTransaction(IsolationLevel.ReadCommitted, cancellationToken);
             
             try
             {
-                await holdRepository.UpdateAsync(captureHoldPaymentSystemResult.Hold!, cancellationToken);
-                await accountRecordRepository.InsertAsync(captureHoldPaymentSystemResult.Payment,
+                //Создание чека
+                newPayment.AddDomainEvent(new CreatePaymentEvent(newPayment));
+                
+                await paymentRepository.InsertAsync(captureHoldPaymentSystemResult.Payment,
                     cancellationToken);
 
+                await holdRepository.UpdateAsync(capturedHold, 
+                    cancellationToken);
+                
                 await transaction.CommitAsync(cancellationToken);
             }
             catch (Exception ex)
             {
-                transaction.RollbackAsync(cancellationToken);
+                await transaction.RollbackAsync(cancellationToken);
                 throw new Exception($"error_while_saving_capture_hold. Message = {ex.Message}");
             }
         }

@@ -10,14 +10,9 @@ public class HoldConfiguration: IEntityTypeConfiguration<Hold>
     {
         builder.ShowOnlyNotDeleted();
 
-        builder.HasOne(x => x.PaymentMethod)
-            .WithMany(x => x.Holds)
-            .HasForeignKey(x => x.PaymentMethodId)
-            .OnDelete(DeleteBehavior.Restrict);
-        
-        builder.HasOne(x => x.PaidResourceType)
-            .WithMany(x => x.Holds)
-            .HasForeignKey(x => x.PaidResourceTypeId)
+        builder.HasMany(x => x.Receipts)
+            .WithOne(x => x.Hold)
+            .HasForeignKey(x => x.HoldId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

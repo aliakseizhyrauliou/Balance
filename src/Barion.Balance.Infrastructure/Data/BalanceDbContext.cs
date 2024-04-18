@@ -15,6 +15,7 @@ public class BalanceDbContext(DbContextOptions<BalanceDbContext> options)
     public DbSet<Hold> Holds { get; set; }
     public DbSet<PaymentSystemConfiguration> PaymentSystemConfigurations { get; set; }
     public DbSet<PaymentSystemWidgetGeneration> PaymentSystemWidgetGenerations { get; set; }
+    public DbSet<Receipt> Receipts { get; set; }
 
     public async Task MigrateDatabase()
     {

@@ -24,7 +24,7 @@ public class Payment : BaseAuditableEntity
     /// <summary>
     /// Идентификатор платежа в платежной системе
     /// </summary>
-    public required string PaymentSystemFinancialTransactionId { get; set; } 
+    public required string PaymentSystemTransactionId { get; set; } 
 
     /// <summary>
     /// Специфическая инфа платежа.
@@ -54,8 +54,22 @@ public class Payment : BaseAuditableEntity
     public required int PaymentMethodId { get; set; }
     public PaymentMethod PaymentMethod { get; set; }
 
+    /// <summary>
+    /// Тип платного ресурса(зарядка, парковка и тд...)
+    /// </summary>
     public required int PaidResourceTypeId { get; set; }
     public PaidResourceType PaidResourceType { get; set; }
+
+
+    /// <summary>
+    /// Id конфигурации платежной системы
+    /// </summary>
+    public required int PaymentSystemConfigurationId { get; set; }
+    public PaymentSystemConfiguration PaymentSystemConfiguration { get; set; }
     
-    public required string ReceiptUrl { get; set; }
+    
+    public string ReceiptUrl { get; set; }
+
+
+    public ICollection<Receipt>? Receipts { get; set; } = new List<Receipt>();
 }

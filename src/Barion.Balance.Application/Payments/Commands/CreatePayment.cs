@@ -1,13 +1,14 @@
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Data;
 using Barion.Balance.Application.Common.Exceptions;
 using Barion.Balance.Application.Common.Repositories;
 using Barion.Balance.Domain.Entities;
+using Barion.Balance.Domain.Events.Payments;
 using Barion.Balance.Domain.Exceptions;
 using Barion.Balance.Domain.Services;
 using MediatR;
 using Newtonsoft.Json;
 
-namespace Barion.Balance.Application.Payments;
+namespace Barion.Balance.Application.Payments.Commands;
 
 public class CreatePaymentCommand : IRequest
 {
@@ -55,7 +56,8 @@ public class CreatePaymentCommand : IRequest
 public class CreatePaymentCommandHandler(IPaymentSystemService paymentSystemService,
     IPaidResourceTypeRepository paidResourceTypeRepository,
     IPaymentMethodRepository paymentMethodRepository,
-    IAccountRecordRepository accountRecordRepository) : IRequestHandler<CreatePaymentCommand>
+    IPaymentSystemConfigurationRepository paymentSystemConfigurationRepository,
+    IAccountRecordRepository paymentsRepository) : IRequestHandler<CreatePaymentCommand>
 {
     public async Task Handle(CreatePaymentCommand request, CancellationToken cancellationToken)
     {
@@ -71,24 +73,48 @@ public class CreatePaymentCommandHandler(IPaymentSystemService paymentSystemServ
             throw new NotFoundException("paid_resource_not_found");
         }
 
+        var paymentSystemcConfiguration = await paymentSystemConfigurationRepository.GetCurrentSchemaAsync(cancellationToken);
+
+        if (paymentSystemcConfiguration is null)
+        {
+            throw new Exception("current_payment_system_configuration_not_found");
+        }
+
         var accountRecord = new Payment
         {
             UserId = request.UserId,
             Amount = request.Amount,
             PaidResourceId = request.PaidResourceId,
-            PaymentSystemFinancialTransactionId = null,
+            PaymentSystemTransactionId = null,
             OperatorId = request.OperatorId,
             PaymentMethodId = request.PaymentMethodId,
             PaidResourceTypeId = request.PaymentMethodId,
             AdditionalData = JsonConvert.SerializeObject(request.AdditionalData),
-            ReceiptUrl = null
+            PaymentSystemConfigurationId = paymentSystemcConfiguration.Id
         };
 
-        var paymentResult = await paymentSystemService.Payment(accountRecord, paymentMethod, cancellationToken);
-
+        var paymentResult = await paymentSystemService.Payment(accountRecord, 
+            paymentMethod, 
+            paymentSystemcConfiguration, 
+            cancellationToken);
+        
         if (paymentResult is not {IsOk: true, Payment: not null})
             throw new PaymentSystemException(paymentResult.FriendlyErrorMessage);
 
-        await accountRecordRepository.InsertAsync(paymentResult.Payment!, cancellationToken);
+        await using var transaction = await paymentsRepository.BeginTransaction(IsolationLevel.ReadCommitted, cancellationToken);
+
+        try
+        {
+            paymentResult.Payment!.AddDomainEvent(new CreatePaymentEvent(paymentResult.Payment));
+
+            await paymentsRepository.InsertAsync(paymentResult.Payment!, cancellationToken);
+
+            await transaction.CommitAsync(cancellationToken);
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
     }
 }

@@ -7,7 +7,7 @@ public class ProcessCaptureHoldPaymentSystemResult
     public bool IsOk { get; set; }
     public string? PaymentSystemTransactionId { get; set; }
 
-    public bool NeedToCreateAccountRecord { get; set; }
+    public bool NeedToCreatePaymentRecord { get; set; }
 
     public Payment? Payment { get; set; }
     public Hold? Hold { get; set; }

@@ -6,13 +6,14 @@ namespace Barion.Balance.Infrastructure.Data.Configuration;
 
 public class PaymentConfiguration :  IEntityTypeConfiguration<Payment>
 {
-
-
+    
     public void Configure(EntityTypeBuilder<Payment> builder)
     {
-        builder.HasOne(x => x.PaidResourceType)
-            .WithMany(x => x.Payments)
-            .HasForeignKey(x => x.PaidResourceTypeId)
-            .OnDelete(DeleteBehavior.Restrict);    
+        builder.ShowOnlyNotDeleted();
+        //Чек
+        builder.HasMany(x => x.Receipts)
+            .WithOne(x => x.Payment)
+            .HasForeignKey(x => x.PaymentId)
+            .OnDelete(DeleteBehavior.Restrict);
     }    
 }

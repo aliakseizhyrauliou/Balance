@@ -59,6 +59,7 @@ public static class DependencyInjection
     private static void AddRepositories(this IServiceCollection services)
     {
         services.AddScoped<IHoldRepository, HoldRepository>();
+        services.AddScoped<IReceiptRepository, ReceiptRepository>();
         services.AddScoped<IPaidResourceTypeRepository, PaidResourceTypeRepository>();
         services.AddScoped<IPaymentSystemWidgetGenerationRepository, PaymentSystemWidgetGenerationRepository>();
         services.AddScoped<IPaymentSystemConfigurationRepository, PaymentSystemConfigurationRepository>();

@@ -4,12 +4,10 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Barion.Balance.Infrastructure.Data.Configuration;
 
-public class PaidResourseTypeConfiguration: IEntityTypeConfiguration<PaidResourceType>
+public class ReceiptConfiguration : IEntityTypeConfiguration<Receipt>
 {
-    public void Configure(EntityTypeBuilder<PaidResourceType> builder)
+    public void Configure(EntityTypeBuilder<Receipt> builder)
     {
         builder.ShowOnlyNotDeleted();
-        
-        
     }
 }

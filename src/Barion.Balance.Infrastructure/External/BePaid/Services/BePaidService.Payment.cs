@@ -2,6 +2,7 @@ using Barion.Balance.Domain.Entities;
 using Barion.Balance.Domain.Services.ServiceResponses;
 using Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Transaction;
 using Barion.Balance.Infrastructure.External.BePaid.BePaidModels.Transaction.TransactionStatus;
+using Barion.Balance.Infrastructure.External.BePaid.Configuration;
 
 namespace Barion.Balance.Infrastructure.External.BePaid.Services;
 
@@ -10,12 +11,13 @@ public partial class BePaidService
     private async Task<ProcessPaymentPaymentSystemResult> ProcessPaymentPaymentSystemResult(
         Payment payment,
         TransactionRoot transaction,
+        PaymentSystemConfiguration paymentSystemConfiguration,
         CancellationToken cancellationToken = default)
     {
         return transaction.Transaction.Status switch
         {
             TransactionStatus.Successful => ProcessSuccessfulPaymentStatus(
-                transaction, payment),
+                transaction, paymentSystemConfiguration, payment),
             TransactionStatus.Failed => ProcessFailedPaymentStatus(
                 transaction, payment),
             _ => throw new NotImplementedException()
@@ -34,6 +36,7 @@ public partial class BePaidService
     }
 
     private ProcessPaymentPaymentSystemResult ProcessSuccessfulPaymentStatus(TransactionRoot transaction, 
+        PaymentSystemConfiguration paymentSystemConfiguration, 
         Payment payment)
     {
         var paymentSystemTransactionId = transaction.Transaction.Id!;
@@ -41,7 +44,8 @@ public partial class BePaidService
 
         payment.IsSuccess = true;
         payment.ReceiptUrl = receiptUrl;
-        payment.PaymentSystemFinancialTransactionId = paymentSystemTransactionId;
+        payment.PaymentSystemTransactionId = paymentSystemTransactionId;
+        payment.PaymentSystemConfigurationId = paymentSystemConfiguration.Id;
 
         return new ProcessPaymentPaymentSystemResult
         {

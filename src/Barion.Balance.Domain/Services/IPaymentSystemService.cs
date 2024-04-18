@@ -44,6 +44,7 @@ public interface IPaymentSystemService
     /// <returns></returns>
     Task<ProcessHoldPaymentSystemResult> Hold(Hold hold,
         PaymentMethod paymentMethod,
+        PaymentSystemConfiguration paymentSystemConfiguration,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -53,6 +54,7 @@ public interface IPaymentSystemService
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<ProcessCaptureHoldPaymentSystemResult> CaptureHold(Hold captureHold, 
+        PaymentSystemConfiguration paymentSystemConfiguration,
         CancellationToken cancellationToken);
 
     
@@ -63,6 +65,7 @@ public interface IPaymentSystemService
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<ProcessVoidHoldPaymentSystemResult> VoidHold(Hold voidHold,
+        PaymentSystemConfiguration paymentSystemConfiguration,
         CancellationToken cancellationToken);
 
     /// <summary>
@@ -73,5 +76,6 @@ public interface IPaymentSystemService
     /// <returns></returns>
     Task<ProcessPaymentPaymentSystemResult> Payment(Payment payment,
         PaymentMethod paymentMethod,
+        PaymentSystemConfiguration paymentSystemConfiguration,
         CancellationToken cancellationToken);
 }

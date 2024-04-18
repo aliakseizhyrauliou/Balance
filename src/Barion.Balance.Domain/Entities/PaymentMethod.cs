@@ -49,13 +49,16 @@ public class PaymentMethod : BaseAuditableEntity
     /// Is selected by user as payment method
     /// </summary>
     public bool IsSelected { get; set; }
-
+    
     public string? PaymentSystemStamp { get; set; }
+    
+    /// <summary>
+    /// Токен платежной системы
+    /// </summary>
     public required string PaymentSystemToken { get; set; }
 
-    public bool IsVerifiedByPaymentSystem { get; set; }
 
+    public ICollection<Receipt>? Receipts { get; set; }
     public ICollection<Hold>? Holds { get; set; }
-
-    public ICollection<Payment>? AccountRecords { get; set; }
+    public ICollection<Payment>? Payments { get; set; }
 }

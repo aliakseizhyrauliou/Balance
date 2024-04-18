@@ -69,33 +69,34 @@ public partial class BePaidService(
 
     public async Task<ProcessHoldPaymentSystemResult> Hold(Hold makeHold,
         PaymentMethod paymentMethod,
+        PaymentSystemConfiguration paymentSystemConfiguration,
         CancellationToken cancellationToken)
     {
-        var configuration = await GetBePaidConfiguration();
-
+        var bePaidConfiguration = await CastToBePaidConfiguration(paymentSystemConfiguration);
+        
         var modelForSending =
-            BePaidModelBuilderHelper.BuildHoldModel(makeHold, paymentMethod.PaymentSystemToken, configuration);
+            BePaidModelBuilderHelper.BuildHoldModel(makeHold, paymentMethod.PaymentSystemToken, bePaidConfiguration);
 
         var httpMessage =
-            BuildHttpRequestMessage(modelForSending, HttpMethod.Post, configuration.Urls.AuthorizationUrl.Url);
+            BuildHttpRequestMessage(modelForSending, HttpMethod.Post, bePaidConfiguration.Urls.AuthorizationUrl.Url);
 
         var sendResult = await SendMessageAndCast<TransactionRoot>(httpMessage, cancellationToken);
-
 
         return await ProcessHoldPaymentSystemResponse(makeHold, sendResult, cancellationToken);
     }
 
 
-    public async Task<ProcessVoidHoldPaymentSystemResult> VoidHold(Hold voidHold, CancellationToken cancellationToken)
+    public async Task<ProcessVoidHoldPaymentSystemResult> VoidHold(Hold voidHold, 
+        PaymentSystemConfiguration paymentSystemConfiguration,
+        CancellationToken cancellationToken)
     {
-        var configuration = await GetBePaidConfiguration();
+        var bePaidConfiguration = await CastToBePaidConfiguration(paymentSystemConfiguration);
 
-        //TODO 
         var modelForSending =
-            BePaidModelBuilderHelper.BuildParentIdModel(voidHold.PaymentSystemTransactionId,
-                (int)voidHold.Amount * 100);
+            BePaidModelBuilderHelper.BuildParentIdModel(voidHold.PaymentSystemTransactionId, 
+                BePaidAmountConverterHelper.ConvertToBePaidFormat(voidHold.Amount));
 
-        var httpMessage = BuildHttpRequestMessage(modelForSending, HttpMethod.Post, configuration.Urls.VoidHold.Url);
+        var httpMessage = BuildHttpRequestMessage(modelForSending, HttpMethod.Post, bePaidConfiguration.Urls.VoidHold.Url);
 
         var sendResult = await SendMessageAndCast<TransactionRoot>(httpMessage, cancellationToken);
 
@@ -104,35 +105,37 @@ public partial class BePaidService(
 
     public async Task<ProcessPaymentPaymentSystemResult> Payment(Payment payment,
         PaymentMethod paymentMethod,
+        PaymentSystemConfiguration paymentSystemConfiguration,
         CancellationToken cancellationToken)
     {
-        var configuration = await GetBePaidConfiguration();
-
+        var bePaidConfiguration = await CastToBePaidConfiguration(paymentSystemConfiguration);
+        
         var modelForSending =
-            BePaidModelBuilderHelper.BuildPaymentModel((int)payment.Amount * 100, paymentMethod.PaymentSystemToken, configuration);
+            BePaidModelBuilderHelper.BuildPaymentModel(BePaidAmountConverterHelper.ConvertToBePaidFormat(payment.Amount),
+                paymentMethod.PaymentSystemToken, bePaidConfiguration);
 
         var httpMessage =
-            BuildHttpRequestMessage(modelForSending, HttpMethod.Post, configuration.Urls.PaymentUrl.Url);
+            BuildHttpRequestMessage(modelForSending, HttpMethod.Post, bePaidConfiguration.Urls.PaymentUrl.Url);
 
         var sendResult = await SendMessageAndCast<TransactionRoot>(httpMessage, cancellationToken);
 
-        return await ProcessPaymentPaymentSystemResult(payment, sendResult, cancellationToken);
+        return await ProcessPaymentPaymentSystemResult(payment, sendResult, paymentSystemConfiguration, cancellationToken);
     }
 
     public async Task<ProcessCaptureHoldPaymentSystemResult> CaptureHold(Hold captureHold,
+        PaymentSystemConfiguration paymentSystemConfiguration,
         CancellationToken cancellationToken)
     {
-        var configuration = await GetBePaidConfiguration();
+        var bePaidConfiguration = await CastToBePaidConfiguration(paymentSystemConfiguration);
 
-        //TODO 
-        var modelForSending = BePaidModelBuilderHelper.BuildParentIdModel(captureHold.PaymentSystemTransactionId,
-            (int)captureHold.Amount * 100);
+        var modelForSending = BePaidModelBuilderHelper.BuildParentIdModel(captureHold.PaymentSystemTransactionId, 
+            BePaidAmountConverterHelper.ConvertToBePaidFormat(captureHold.Amount));
 
-        var httpMessage = BuildHttpRequestMessage(modelForSending, HttpMethod.Post, configuration.Urls.CaptureHoldUrl.Url);
+        var httpMessage = BuildHttpRequestMessage(modelForSending, HttpMethod.Post, bePaidConfiguration.Urls.CaptureHoldUrl.Url);
 
         var sendResult = await SendMessageAndCast<TransactionRoot>(httpMessage, cancellationToken);
 
-        return await ProcessCaptureHoldPaymentSystemResponse(captureHold, sendResult, cancellationToken);
+        return await ProcessCaptureHoldPaymentSystemResponse(captureHold, sendResult, paymentSystemConfiguration, cancellationToken);
     }
 
 
@@ -142,6 +145,12 @@ public partial class BePaidService(
 
         return BePaidConfigurationDeserializationHelper.DeserializeToBePaidConfiguration(configurationModel);
     }
+    
+    private async Task<BePaidConfiguration?> CastToBePaidConfiguration(PaymentSystemConfiguration configuration)
+    {
+        return BePaidConfigurationDeserializationHelper.DeserializeToBePaidConfiguration(configuration);
+    }
+
 
     private async Task<T?> SendMessageAndCast<T>(HttpRequestMessage requestMessage,
         CancellationToken cancellationToken)

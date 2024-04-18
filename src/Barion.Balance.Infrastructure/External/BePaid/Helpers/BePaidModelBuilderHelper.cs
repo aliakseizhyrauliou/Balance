@@ -21,7 +21,7 @@ public static class BePaidModelBuilderHelper
         {
             Request = new CreateTransaction
             {
-                Amount = BePaidAmountConverterHelper.ConvertToBePaidFormat(amount),
+                Amount = amount,
                 Currency = "BYN",
                 Description = "Платеж",
                 Language = "ru",

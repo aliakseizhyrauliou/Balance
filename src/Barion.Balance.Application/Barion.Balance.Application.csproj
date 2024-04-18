@@ -19,7 +19,15 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Holds\EventHandler\" />
+      <Compile Remove="Holds\EventHandler\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="Holds\EventHandler\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Holds\EventHandler\**" />
     </ItemGroup>
 
 </Project>
