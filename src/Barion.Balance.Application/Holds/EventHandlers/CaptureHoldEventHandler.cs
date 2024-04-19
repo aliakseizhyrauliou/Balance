@@ -19,7 +19,8 @@ public class CaptureHoldEventHandler(IReceiptRepository receiptRepository)
             PaymentSystemConfigurationId = notification.Hold.PaymentSystemConfigurationId,
             PaymentMethodId = notification.Hold.PaymentMethodId,
             HoldId = notification.Hold.Id,
-            IsReceiptForHold = true
+            IsReceiptForHold = true,
+            PaidResourceTypeId = notification.Hold.PaidResourceTypeId
         };
 
 

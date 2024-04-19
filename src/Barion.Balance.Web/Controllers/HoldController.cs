@@ -30,7 +30,7 @@ public class HoldController(ISender sender, IMediator mediator, IPaymentSystemCo
     /// </summary>
     /// <param name="command"></param>
     /// <param name="cancellationToken"></param>
-    [HttpPost("void_hold")]
+    [HttpPost("voidHold")]
     public async Task VoidHold([FromBody] VoidHoldCommand command, CancellationToken cancellationToken)
     {
         await _mediator.Send(command, cancellationToken);
@@ -52,7 +52,7 @@ public class HoldController(ISender sender, IMediator mediator, IPaymentSystemCo
     /// </summary>
     /// <param name="command"></param>
     /// <param name="cancellationToken"></param>
-    [HttpPost("capture_hold")]
+    [HttpPost("captureHold")]
     public async Task CaptureHold([FromBody] CaptureHoldCommand command, CancellationToken cancellationToken)
     {
         await _mediator.Send(command, cancellationToken);

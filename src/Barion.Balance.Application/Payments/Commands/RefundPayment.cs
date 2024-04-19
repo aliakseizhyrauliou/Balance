@@ -26,7 +26,12 @@ public class RefundPaymentCommandHandler(IPaymentSystemService paymentSystemServ
         {
             throw new NotFoundException("payment_was_not_found");
         }
-        
+
+        if (payment.IsRefund)
+        {
+            throw new InvalidArgumentException("payment_already_refunded");
+        }
+
         var currentPaymentSystemConfiguration = await paymentSystemConfigurationRepository.GetCurrentSchemaAsync(cancellationToken);
 
         if (currentPaymentSystemConfiguration is null)

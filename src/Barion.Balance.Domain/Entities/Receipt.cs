@@ -50,7 +50,12 @@ public class Receipt : BaseAuditableEntity
     public int? HoldId { get; set; }
     public Hold? Hold { get; set; }
 
-    
+
+    /// <summary>
+    /// Тип платного ресурса
+    /// </summary>
+    public int? PaidResourceTypeId { get; set; }
+    public PaidResourceType PaidResourceType { get; set; }
 
     public bool IsReceiptForHold { get; set; }
     public bool IsReceiptForPayment { get; set; }

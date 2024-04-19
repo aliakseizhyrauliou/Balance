@@ -258,6 +258,7 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                     PaymentId = table.Column<int>(type: "integer", nullable: true),
                     OperatorId = table.Column<string>(type: "text", nullable: false),
                     AdditionalData = table.Column<string>(type: "jsonb", nullable: true),
+                    PaymentSystemMessage = table.Column<string>(type: "text", nullable: true),
                     Created = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<string>(type: "text", nullable: true),
                     LastModified = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -307,6 +308,7 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                     PaymentMethodId = table.Column<int>(type: "integer", nullable: true),
                     PaymentId = table.Column<int>(type: "integer", nullable: true),
                     HoldId = table.Column<int>(type: "integer", nullable: true),
+                    PaidResourceTypeId = table.Column<int>(type: "integer", nullable: true),
                     IsReceiptForHold = table.Column<bool>(type: "boolean", nullable: false),
                     IsReceiptForPayment = table.Column<bool>(type: "boolean", nullable: false),
                     Created = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -322,6 +324,12 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                         name: "FK_Receipts_Holds_HoldId",
                         column: x => x.HoldId,
                         principalTable: "Holds",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Receipts_PaidResourceType_PaidResourceTypeId",
+                        column: x => x.PaidResourceTypeId,
+                        principalTable: "PaidResourceType",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -427,6 +435,11 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                 name: "IX_Receipts_HoldId",
                 table: "Receipts",
                 column: "HoldId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Receipts_PaidResourceTypeId",
+                table: "Receipts",
+                column: "PaidResourceTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Receipts_PaymentId",

@@ -13,7 +13,7 @@ namespace Barion.Balance.Web.Controllers;
 /// </summary>
 public class PaymentMethodController(ISender sender, 
     IMediator mediator,
-    IWidgetUseCase widgetUseCase) : MediatrController(sender, mediator)
+    IWidgetUseCases widgetUseCases) : MediatrController(sender, mediator)
 {
     /// <summary>
     /// Создать ссылку для привязки карты
@@ -22,11 +22,11 @@ public class PaymentMethodController(ISender sender,
     /// <param name="dto"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    [HttpPost("generateCreatePaymentMethodMethodWidget")]
-    public async Task<CheckoutDto> GenerateCreatePaymentMethodMethodWidget([FromBody] GeneratePaymentMethodWidgetDto dto,
+    [HttpPost("generateCreatePaymentMethodWidget")]
+    public async Task<CheckoutDto> GenerateCreatePaymentMethodWidget([FromBody] GeneratePaymentMethodWidgetDto dto,
         CancellationToken cancellationToken)
     {
-        return await widgetUseCase.GenerateWidgetForCreatePaymentMethodAsync(dto, cancellationToken);
+        return await widgetUseCases.GenerateWidgetForCreatePaymentMethodAsync(dto, cancellationToken);
     }
     
     /// <summary>
@@ -60,13 +60,18 @@ public class PaymentMethodController(ISender sender,
     /// </summary>
     /// <param name="query"></param>
     /// <param name="cancellationToken"></param>
-    [HttpDelete]
+    [HttpDelete("deletePaymentMethod")]
     public async Task DeletePaymentMethod([FromQuery] DeletePaymentMethodCommand query,
         CancellationToken cancellationToken)
     {
         await _mediator.Send(query, cancellationToken);
     }
 
+    /// <summary>
+    /// Получить коллекцию платежных методов
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     [HttpGet("list")]
     public async Task<List<PaymentMethodDto>> List(CancellationToken cancellationToken)
     {

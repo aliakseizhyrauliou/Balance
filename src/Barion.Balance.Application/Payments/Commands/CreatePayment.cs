@@ -88,7 +88,7 @@ public class CreatePaymentCommandHandler(IPaymentSystemService paymentSystemServ
             PaymentSystemTransactionId = null,
             OperatorId = request.OperatorId,
             PaymentMethodId = request.PaymentMethodId,
-            PaidResourceTypeId = request.PaymentMethodId,
+            PaidResourceTypeId = request.PaidResourceTypeId,
             AdditionalData = JsonConvert.SerializeObject(request.AdditionalData),
             PaymentSystemConfigurationId = paymentSystemcConfiguration.Id
         };

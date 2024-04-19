@@ -19,7 +19,8 @@ public class MakeHoldEventHandler(IReceiptRepository receiptRepository)
             Url = notification.Hold.ReceiptUrl,
             PaymentSystemConfigurationId = notification.Hold.PaymentSystemConfigurationId,
             PaymentMethodId = notification.Hold.PaymentMethodId,
-            IsReceiptForHold = true
+            IsReceiptForHold = true,
+            PaidResourceTypeId = notification.Hold.PaidResourceTypeId
         };
         
         notification.Hold.Receipts?.Add(receipt);

@@ -29,5 +29,10 @@ public class PaidResourceTypeConfiguration: IEntityTypeConfiguration<PaidResourc
             .WithOne(x => x.PaidResourceType)
             .HasForeignKey(x => x.PaidResourceTypeId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(x => x.Receipts)
+            .WithOne(x => x.PaidResourceType)
+            .HasForeignKey(x => x.PaidResourceTypeId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

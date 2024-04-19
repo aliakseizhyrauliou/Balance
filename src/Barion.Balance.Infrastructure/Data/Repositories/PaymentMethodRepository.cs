@@ -8,6 +8,11 @@ namespace Barion.Balance.Infrastructure.Data.Repositories;
 public sealed class PaymentMethodRepository(IBalanceDbContext context)
     : BaseRepository<PaymentMethod>(context), IPaymentMethodRepository
 {
+    public async Task<PaymentMethod?> GetSelectedAsync(string userId, CancellationToken cancellationToken = default)
+    {
+        return await dbSet.SingleOrDefaultAsync(x => x.UserId == userId && x.IsSelected, cancellationToken);
+    }
+
     public async Task UnselectAllPaymentMethodsAsync(string userId, 
         CancellationToken cancellationToken = default)
     {

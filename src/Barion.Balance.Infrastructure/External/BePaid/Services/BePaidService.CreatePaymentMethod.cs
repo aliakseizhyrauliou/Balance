@@ -13,6 +13,9 @@ public partial class BePaidService
         ProcessFailedCreatePaymentMethodWidgetStatus(TransactionRoot concretePaymentSystemObjectResponse,
             PaymentSystemWidget paymentSystemWidget)
     {
+        paymentSystemWidget.PaymentSystemMessage =
+            concretePaymentSystemObjectResponse.Transaction.Message ?? "Error from payment system";
+        
         return new ProcessCreatePaymentMethodPaymentSystemWidgetResult
         {
             IsOk = false,
@@ -27,6 +30,8 @@ public partial class BePaidService
         ProcessSuccessfulCreatePaymentMethodWidgetStatus(TransactionRoot transaction,
             PaymentSystemWidget paymentSystemWidget)
     {
+        paymentSystemWidget.PaymentSystemMessage = transaction.Transaction.Message;
+        
         var paymentMethod = new PaymentMethod
         {
             UserId = paymentSystemWidget.UserId,
@@ -39,7 +44,7 @@ public partial class BePaidService
             {
                 FirstOne = transaction.Transaction.CreditCard.First1,
                 LastFour = transaction.Transaction.CreditCard.Last4
-            }),
+            })
         };
 
         return new ProcessCreatePaymentMethodPaymentSystemWidgetResult
@@ -48,5 +53,5 @@ public partial class BePaidService
             PaymentMethod = paymentMethod,
             IsOk = true
         };
-    }
+    }   
 }

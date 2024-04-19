@@ -1,5 +1,4 @@
 using Barion.Balance.Application.PaymentSystemWidgetGenerations.Commands;
-using Barion.Balance.Domain.Services.ServiceResponses;
 using Barion.Balance.Web.Infrastructure.Helpers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

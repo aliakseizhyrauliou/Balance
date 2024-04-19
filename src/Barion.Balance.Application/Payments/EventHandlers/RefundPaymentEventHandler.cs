@@ -16,7 +16,8 @@ public class RefundPaymentEventHandler : INotificationHandler<RefundPaymentEvent
             Url = notification.RefundReceiptUrl,
             PaymentSystemConfigurationId = notification.Payment.PaymentSystemConfigurationId,
             PaymentMethodId = notification.Payment.PaymentMethodId,
-            IsReceiptForPayment = true
+            IsReceiptForPayment = true,
+            PaidResourceTypeId = notification.Payment.PaidResourceTypeId
         };
 
         notification.Payment.Receipts?.Add(receipt);

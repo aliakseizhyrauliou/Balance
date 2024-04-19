@@ -17,10 +17,11 @@ public class CustomExceptionHandler : IExceptionHandler
                 { typeof(ValidationException), HandleValidationException },
                 { typeof(NotFoundException), HandleNotFoundException },
                 { typeof(ForbiddenAccessException), HandleForbiddenAccessException },
-                {typeof(PaymentSystemException), HandlePaymentSystemException }
+                { typeof(PaymentSystemException), HandlePaymentSystemException },
+                { typeof(InvalidArgumentException), HandleInvalidArgumentException}
             };
     }
-
+    
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
         var exceptionType = exception.GetType();
@@ -33,6 +34,21 @@ public class CustomExceptionHandler : IExceptionHandler
 
     }
 
+    private async Task HandleInvalidArgumentException(HttpContext httpContext, Exception ex)
+    {
+        var exception = (InvalidArgumentException)ex;
+
+        httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+
+        await httpContext.Response.WriteAsJsonAsync(new ValidationProblemDetails
+        {
+            Status = StatusCodes.Status400BadRequest,
+            Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+            Detail = exception.Message
+        });
+    }
+
+    
     private async Task HandleValidationException(HttpContext httpContext, Exception ex)
     {
         var exception = (ValidationException)ex;

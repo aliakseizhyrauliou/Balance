@@ -460,6 +460,9 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                     b.Property<int?>("PaymentSystemConfigurationId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("PaymentSystemMessage")
+                        .HasColumnType("text");
+
                     b.Property<string>("Token")
                         .HasColumnType("text");
 
@@ -524,6 +527,9 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int?>("PaidResourceTypeId")
+                        .HasColumnType("integer");
+
                     b.Property<int?>("PaymentId")
                         .HasColumnType("integer");
 
@@ -547,6 +553,8 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("HoldId");
+
+                    b.HasIndex("PaidResourceTypeId");
 
                     b.HasIndex("PaymentId");
 
@@ -682,6 +690,11 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                         .HasForeignKey("HoldId")
                         .OnDelete(DeleteBehavior.Cascade);
 
+                    b.HasOne("Barion.Balance.Domain.Entities.PaidResourceType", "PaidResourceType")
+                        .WithMany("Receipts")
+                        .HasForeignKey("PaidResourceTypeId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("Barion.Balance.Domain.Entities.Payment", "Payment")
                         .WithMany("Receipts")
                         .HasForeignKey("PaymentId")
@@ -698,6 +711,8 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Hold");
+
+                    b.Navigation("PaidResourceType");
 
                     b.Navigation("Payment");
 
@@ -724,6 +739,8 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                     b.Navigation("PaymentSystemWidgets");
 
                     b.Navigation("Payments");
+
+                    b.Navigation("Receipts");
                 });
 
             modelBuilder.Entity("Barion.Balance.Domain.Entities.Payment", b =>

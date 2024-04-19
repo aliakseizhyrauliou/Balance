@@ -18,7 +18,8 @@ public class CreatePaymentEventHandler(IReceiptRepository receiptRepository)
             Url = notification.Payment.ReceiptUrl,
             PaymentSystemConfigurationId = notification.Payment.PaymentSystemConfigurationId,
             PaymentMethodId = notification.Payment.PaymentMethodId,
-            IsReceiptForPayment = true
+            IsReceiptForPayment = true,
+            PaidResourceTypeId = notification.Payment.PaidResourceTypeId
         };
 
         notification.Payment.Receipts?.Add(receipt);

@@ -1,3 +1,4 @@
+using System.Data;
 using Barion.Balance.Application.Common.Repositories;
 using Barion.Balance.Domain.Entities;
 using Barion.Balance.Domain.Services;
@@ -38,11 +39,32 @@ public sealed class  ProcessCreatePaymentMethodWidgetResponseCommandHandler(IPay
 
         var newPaymentMethodServiceResponse = await paymentSystemService.ProcessCreatePaymentMethodPaymentSystemWidgetResponse(request.JsonResponse, dbWidget, CancellationToken.None);
 
-        await UpdatePaymentWidget(dbWidget, newPaymentMethodServiceResponse.IsOk);
-
-        if (newPaymentMethodServiceResponse is { IsOk: true, PaymentMethod: not null })
+        await using var transaction = await paymentMethodRepository.BeginTransaction(IsolationLevel.ReadCommitted, cancellationToken);
+        
+        try
         {
-            await paymentMethodRepository.InsertAsync(newPaymentMethodServiceResponse.PaymentMethod, CancellationToken.None);
+            await UpdatePaymentWidget(dbWidget, newPaymentMethodServiceResponse.IsOk);
+
+            if (newPaymentMethodServiceResponse is { IsOk: true, PaymentMethod: not null })
+            {
+                var newPaymentMethod = newPaymentMethodServiceResponse.PaymentMethod;
+
+                if (!await paymentMethodRepository.AnyAsync(x =>
+                        x.UserId == newPaymentMethod.UserId && x.IsSelected, cancellationToken))
+                {
+                    newPaymentMethod.IsSelected = true;
+                }
+
+                await paymentMethodRepository.InsertAsync(newPaymentMethodServiceResponse.PaymentMethod,
+                    CancellationToken.None);
+            }
+
+            await transaction.CommitAsync(cancellationToken);
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
         }
     }
 

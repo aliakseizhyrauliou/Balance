@@ -1,9 +1,10 @@
 using Barion.Balance.Application.PaymentSystemWidgetGenerations.Queries;
+using Barion.Balance.UseCases.Base;
 using Barion.Balance.UseCases.PaymentSystemWidgets.Dtos;
 
 namespace Barion.Balance.UseCases.PaymentSystemWidgets.Interfaces;
 
-public interface IWidgetUseCase : IBaseUseCase
+public interface IWidgetUseCases : IBaseUseCase
 {
     Task<CheckoutDto> GenerateWidgetForCreatePaymentMethodAsync(GeneratePaymentMethodWidgetDto dto, 
         CancellationToken cancellationToken = default);

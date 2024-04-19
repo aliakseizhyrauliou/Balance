@@ -12,12 +12,22 @@ namespace Barion.Balance.Web.Controllers;
 /// <param name="mediator"></param>
 public class PaidResourceTypeController(ISender sender, IMediator mediator) : MediatrController(sender, mediator)
 {
+    /// <summary>
+    /// Создать платный ресурс
+    /// </summary>
+    /// <param name="command"></param>
+    /// <param name="cancellationToken"></param>
     [HttpPost("create")]
     public async Task Create(CreatePaidResourceTypeCommand command, CancellationToken cancellationToken)
     {
         await mediator.Send(command, cancellationToken);
     }
 
+    /// <summary>
+    /// Получить коллекцию платных ресурсов
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     [HttpGet("list")]
     public async Task<List<PaidResourceTypeDto>> List(CancellationToken cancellationToken)
     {

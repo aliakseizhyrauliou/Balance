@@ -1,5 +1,7 @@
 using Barion.Balance.Application.Payments.Commands;
 using Barion.Balance.Application.PaymentSystemWidgetGenerations.Queries;
+using Barion.Balance.UseCases.Payments.Dtos;
+using Barion.Balance.UseCases.Payments.Interfaces;
 using Barion.Balance.UseCases.PaymentSystemWidgets.Dtos;
 using Barion.Balance.UseCases.PaymentSystemWidgets.Interfaces;
 using MediatR;
@@ -12,8 +14,11 @@ namespace Barion.Balance.Web.Controllers;
 /// </summary>
 /// <param name="sender"></param>
 /// <param name="mediator"></param>
-/// <param name="widgetUseCase"></param>
-public class PaymentController(ISender sender, IMediator mediator, IWidgetUseCase widgetUseCase) 
+/// <param name="widgetUseCases"></param>
+public class PaymentController(ISender sender,
+    IMediator mediator,
+    IWidgetUseCases widgetUseCases,
+    IPaymentUseCases paymentUseCases) 
     : MediatrController(sender, mediator)
 {
 
@@ -27,7 +32,7 @@ public class PaymentController(ISender sender, IMediator mediator, IWidgetUseCas
     public async Task<CheckoutDto> GeneratePaymentWidget([FromBody] GeneratePaymentWidgetDto dto,
         CancellationToken cancellationToken)
     {
-        return await widgetUseCase.GenerateWidgetForPayment(dto, cancellationToken);
+        return await widgetUseCases.GenerateWidgetForPayment(dto, cancellationToken);
     }
 
     /// <summary>
@@ -39,6 +44,18 @@ public class PaymentController(ISender sender, IMediator mediator, IWidgetUseCas
     public async Task Payment([FromBody] CreatePaymentCommand command, CancellationToken cancellationToken)
     {
         await mediator.Send(command, cancellationToken);
+    }
+
+    /// <summary>
+    /// Совершить платеж выбраным пользователем платежным методом
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <param name="cancellationToken"></param>
+    [HttpPost("paymentWithSelectedPaymentMethod")]
+    public async Task PaymentWithSelectedPaymentMethod([FromBody] PaymentWithSelectedPaymentMethodDto dto,
+        CancellationToken cancellationToken = default)
+    {
+        await paymentUseCases.PaymentWithSelectedPaymentMethod(dto, cancellationToken);
     }
 
     /// <summary>
