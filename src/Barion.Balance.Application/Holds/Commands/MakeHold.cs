@@ -46,7 +46,6 @@ public sealed class MakeHoldCommandHandler(IPaymentSystemService paymentSystemSe
     IPaymentMethodRepository paymentMethodRepository,
     IHoldRepository repository,
     IPaymentSystemConfigurationRepository configurationRepository,
-    IReceiptRepository receiptRepository,
     IPaidResourceTypeRepository paidResourceTypeRepository) : IRequestHandler<MakeHoldCommand, int>
 {
     public async Task<int> Handle(MakeHoldCommand request, 
