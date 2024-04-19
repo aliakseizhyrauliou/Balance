@@ -1,11 +1,10 @@
 using System.Data;
 using Barion.Balance.Application.Common.Repositories;
-using Barion.Balance.Domain.Entities;
 using Barion.Balance.Domain.Services;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace Barion.Balance.Application.PaymentSystemWidgetGenerations.Commands;
+namespace Barion.Balance.Application.PaymentSystemWidgets.Commands;
 
 /// <summary>
 /// Обработка запроса от BePaid по созданию карты
@@ -68,7 +67,7 @@ public sealed class  ProcessCreatePaymentMethodWidgetResponseCommandHandler(IPay
         }
     }
 
-    private async Task UpdatePaymentWidget(PaymentSystemWidget paymentSystemWidget, 
+    private async Task UpdatePaymentWidget(Domain.Entities.PaymentSystemWidget paymentSystemWidget, 
         bool isOk)
     {
         paymentSystemWidget.GotResponseFromPaymentSystem = true;

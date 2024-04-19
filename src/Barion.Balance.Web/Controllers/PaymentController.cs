@@ -1,5 +1,6 @@
 using Barion.Balance.Application.Payments.Commands;
-using Barion.Balance.Application.PaymentSystemWidgetGenerations.Queries;
+using Barion.Balance.Application.PaymentSystemWidgets.Queries;
+using Barion.Balance.UseCases.Common;
 using Barion.Balance.UseCases.Payments.Dtos;
 using Barion.Balance.UseCases.Payments.Interfaces;
 using Barion.Balance.UseCases.PaymentSystemWidgets.Dtos;
@@ -52,10 +53,11 @@ public class PaymentController(ISender sender,
     /// <param name="dto"></param>
     /// <param name="cancellationToken"></param>
     [HttpPost("paymentWithSelectedPaymentMethod")]
-    public async Task PaymentWithSelectedPaymentMethod([FromBody] PaymentWithSelectedPaymentMethodDto dto,
+    [ProducesResponseType(typeof(CreatedEntityDto<int>), 200)]
+    public async Task<CreatedEntityDto<int>> PaymentWithSelectedPaymentMethod([FromBody] PaymentWithSelectedPaymentMethodDto dto,
         CancellationToken cancellationToken = default)
     {
-        await paymentUseCases.PaymentWithSelectedPaymentMethod(dto, cancellationToken);
+        return await paymentUseCases.PaymentWithSelectedPaymentMethod(dto, cancellationToken);
     }
 
     /// <summary>

@@ -1,7 +1,8 @@
 using Barion.Balance.Application.Holds.Commands;
 using Barion.Balance.Application.Holds.Queries;
-using Barion.Balance.Domain.Services;
-using Barion.Balance.Web.Infrastructure.Attributes;
+using Barion.Balance.UseCases.Common;
+using Barion.Balance.UseCases.Holds.Dtos;
+using Barion.Balance.UseCases.Holds.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,7 +13,9 @@ namespace Barion.Balance.Web.Controllers;
 /// </summary>
 /// <param name="sender"></param>
 /// <param name="mediator"></param>
-public class HoldController(ISender sender, IMediator mediator, IPaymentSystemConfigurationService configurationService) 
+public class HoldController(ISender sender, 
+    IMediator mediator,
+    IHoldUseCases holdUseCases) 
     : MediatrController(sender, mediator)
 {
     
@@ -47,6 +50,22 @@ public class HoldController(ISender sender, IMediator mediator, IPaymentSystemCo
     public async Task Hold([FromBody] MakeHoldCommand command, CancellationToken cancellationToken)
     { 
         await _mediator.Send(command, cancellationToken);
+    }
+
+
+    /// <summary>
+    /// Захолдировать сумму с выбранного пользователем платежного метода
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpPost("holdWithSelectedPaymentMethod")]
+    [ProducesResponseType(typeof(CreatedEntityDto<int>), 200)]
+    public async Task<CreatedEntityDto<int>> HoldWithSelectedPaymentMethod(
+        [FromBody] HoldWithSelectedPaymentMethodDto dto,
+        CancellationToken cancellationToken)
+    {
+        return await holdUseCases.HoldWithSelectedPaymentMethod(dto, cancellationToken);
     }
 
     /// <summary>

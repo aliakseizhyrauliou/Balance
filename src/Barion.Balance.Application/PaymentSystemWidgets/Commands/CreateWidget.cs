@@ -1,15 +1,12 @@
+using System.Data;
 using Barion.Balance.Application.Common.Interfaces;
 using Barion.Balance.Application.Common.Repositories;
-using Barion.Balance.Domain.Entities;
 using Barion.Balance.Domain.Enums;
 using Barion.Balance.Domain.Events.PaymentSystemWidgetGenerations;
 using Barion.Balance.Domain.Services;
 using MediatR;
-using System.Data;
-using Newtonsoft.Json;
-using PaidResourceType = Barion.Balance.Domain.Enums.PaidResourceType;
 
-namespace Barion.Balance.Application.PaymentSystemWidgetGenerations.Commands;
+namespace Barion.Balance.Application.PaymentSystemWidgets.Commands;
 
 /// <summary>
 /// Создание виджета
@@ -80,10 +77,10 @@ public sealed class CreateWidgetCommandHandler(
         }
     }
 
-    private PaymentSystemWidget BuildPaymentSystemWidgetGeneration(int currentPaymentSystemConfiguration,
+    private Domain.Entities.PaymentSystemWidget BuildPaymentSystemWidgetGeneration(int currentPaymentSystemConfiguration,
         CreateWidgetCommand request)  
     {
-        return new PaymentSystemWidget
+        return new Domain.Entities.PaymentSystemWidget
         {
             UserId = currentUserData.Id!,
             FirstName = currentUserData.FirstName!,

@@ -1,4 +1,4 @@
-using Barion.Balance.Application.PaymentSystemWidgetGenerations.Queries;
+using Barion.Balance.Application.PaymentSystemWidgets.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

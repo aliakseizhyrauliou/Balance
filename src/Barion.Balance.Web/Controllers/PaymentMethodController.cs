@@ -1,6 +1,6 @@
 using Barion.Balance.Application.PaymentMethods.Commands;
 using Barion.Balance.Application.PaymentMethods.Queries;
-using Barion.Balance.Application.PaymentSystemWidgetGenerations.Queries;
+using Barion.Balance.Application.PaymentSystemWidgets.Queries;
 using Barion.Balance.UseCases.PaymentSystemWidgets.Dtos;
 using Barion.Balance.UseCases.PaymentSystemWidgets.Interfaces;
 using MediatR;

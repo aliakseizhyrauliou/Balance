@@ -14,7 +14,7 @@ public static class DependencyInjection
     {
         serviceCollection.AddScoped<IWidgetUseCases, WidgetUseCases>();
         serviceCollection.AddScoped<IPaymentUseCases, PaymentUseCases>();
-        serviceCollection.AddScoped<IHoldUseCase, HoldUseCase>();
+        serviceCollection.AddScoped<IHoldUseCases, HoldUseCases>();
         
         return serviceCollection;
     }

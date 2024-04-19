@@ -3,9 +3,9 @@ using Barion.Balance.Domain.Events.PaymentSystemWidgetGenerations;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace Barion.Balance.Application.PaymentSystemWidgetGenerations.EventHandlers;
+namespace Barion.Balance.Application.PaymentSystemWidgets.EventHandlers;
 
-public class PaymentSystemWidgetGenerationCreatedEventHandler(ILogger<PaymentSystemWidgetGenerationCreatedEventHandler> logger, 
+public class PaymentSystemWidgetCreatedEventHandler(ILogger<PaymentSystemWidgetCreatedEventHandler> logger, 
     IPaymentSystemWidgetGenerationRepository repository) 
     : INotificationHandler<PaymentSystemWidgetGenerationCreatedEvent>
 {

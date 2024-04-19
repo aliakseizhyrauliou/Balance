@@ -2,16 +2,16 @@ using Barion.Balance.Application.Common.Interfaces;
 using Barion.Balance.Application.PaymentMethods.Queries;
 using Barion.Balance.Application.Payments.Commands;
 using Barion.Balance.UseCases.Base;
+using Barion.Balance.UseCases.Common;
 using Barion.Balance.UseCases.Payments.Dtos;
 using Barion.Balance.UseCases.Payments.Interfaces;
-using Barion.Balance.UseCases.PaymentSystemWidgets.Implementations;
 using MediatR;
 
 namespace Barion.Balance.UseCases.Payments.Implementations;
 
-public class PaymentUseCases(IMediator mediator, IUser currentUser) : BaseUseCase(mediator, currentUser), IPaymentUseCases
+public class PaymentUseCases(IMediator mediator, IUser currentUser) : BaseUseCases(mediator, currentUser), IPaymentUseCases
 {
-    public async Task PaymentWithSelectedPaymentMethod(PaymentWithSelectedPaymentMethodDto dto,
+    public async Task<CreatedEntityDto<int>> PaymentWithSelectedPaymentMethod(PaymentWithSelectedPaymentMethodDto dto,
         CancellationToken cancellationToken = default)
     {
         var selectedMethod = await mediator.Send(new GetSelectedPaymentMethodByUserIdQuery
@@ -19,7 +19,7 @@ public class PaymentUseCases(IMediator mediator, IUser currentUser) : BaseUseCas
             UserId = currentUser.Id
         }, cancellationToken);
 
-        await mediator.Send(new CreatePaymentCommand
+        var createdPaymentId = await mediator.Send(new CreatePaymentCommand
         {
             UserId = currentUser.Id,
             Amount = dto.Amount,
@@ -28,7 +28,10 @@ public class PaymentUseCases(IMediator mediator, IUser currentUser) : BaseUseCas
             OperatorId = dto.OperatorId,
             IsBonus = false,
             PaymentMethodId = selectedMethod.Id,
-            PaidResourceTypeId = dto.PaidResourceTypeId,
+            PaidResourceTypeId = dto.PaidResourceTypeId
         }, cancellationToken);
+
+
+        return new CreatedEntityDto<int>(createdPaymentId);
     }
 }

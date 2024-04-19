@@ -4,7 +4,7 @@ using Barion.Balance.Application.Common.Interfaces;
 using Barion.Balance.Application.Common.Repositories;
 using MediatR;
 
-namespace Barion.Balance.Application.PaymentSystemWidgetGenerations.Queries;
+namespace Barion.Balance.Application.PaymentSystemWidgets.Queries;
 
 public class GetActivePaymentSystemWidgetQuery : IRequest<CheckoutDto>;
 

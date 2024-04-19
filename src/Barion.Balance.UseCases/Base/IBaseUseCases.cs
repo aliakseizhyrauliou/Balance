@@ -1,3 +1,3 @@
 namespace Barion.Balance.UseCases.Base;
 
-public interface IBaseUseCase;
+public interface IBaseUseCases;

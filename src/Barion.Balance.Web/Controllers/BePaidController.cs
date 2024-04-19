@@ -1,4 +1,4 @@
-using Barion.Balance.Application.PaymentSystemWidgetGenerations.Commands;
+using Barion.Balance.Application.PaymentSystemWidgets.Commands;
 using Barion.Balance.Web.Infrastructure.Attributes;
 using Barion.Balance.Web.Infrastructure.Helpers;
 using MediatR;

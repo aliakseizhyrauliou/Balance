@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace Barion.Balance.Application.Payments.Commands;
 
-public class CreatePaymentCommand : IRequest
+public class CreatePaymentCommand : IRequest<int>
 {
     /// <summary>
     /// Идентификатор пользователя 
@@ -57,9 +57,9 @@ public class CreatePaymentCommandHandler(IPaymentSystemService paymentSystemServ
     IPaidResourceTypeRepository paidResourceTypeRepository,
     IPaymentMethodRepository paymentMethodRepository,
     IPaymentSystemConfigurationRepository paymentSystemConfigurationRepository,
-    IPaymentRepository paymentsRepository) : IRequestHandler<CreatePaymentCommand>
+    IPaymentRepository paymentsRepository) : IRequestHandler<CreatePaymentCommand, int>
 {
-    public async Task Handle(CreatePaymentCommand request, CancellationToken cancellationToken)
+    public async Task<int> Handle(CreatePaymentCommand request, CancellationToken cancellationToken)
     {
         var paymentMethod = await paymentMethodRepository.GetByIdAsync(request.PaymentMethodId, cancellationToken);
 
@@ -116,5 +116,7 @@ public class CreatePaymentCommandHandler(IPaymentSystemService paymentSystemServ
             await transaction.RollbackAsync(cancellationToken);
             throw;
         }
+
+        return paymentResult.Payment!.Id;
     }
 }

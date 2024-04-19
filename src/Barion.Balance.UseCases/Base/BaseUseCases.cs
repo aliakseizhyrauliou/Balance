@@ -3,4 +3,4 @@ using MediatR;
 
 namespace Barion.Balance.UseCases.Base;
 
-public abstract class BaseUseCase(IMediator mediator, IUser currentUser) : IBaseUseCase;
+public abstract class BaseUseCases(IMediator mediator, IUser currentUser) : IBaseUseCases;
