@@ -1,4 +1,5 @@
 using Barion.Balance.Application.PaymentSystemWidgetGenerations.Commands;
+using Barion.Balance.Web.Infrastructure.Attributes;
 using Barion.Balance.Web.Infrastructure.Helpers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +20,7 @@ public class BePaidController(ISender sender, IMediator mediator)
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
+    [EnsureBePaid]
     [HttpPost("verifyPaymentMethodNotification")]
     public async Task<IActionResult> VerifyPaymentMethodNotification(CancellationToken cancellationToken)
     {
@@ -34,6 +36,7 @@ public class BePaidController(ISender sender, IMediator mediator)
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
+    [EnsureBePaid]
     [HttpPost("verifyPaymentNotification")]
     public async Task<IActionResult> VerifyPaymentNotification(CancellationToken cancellationToken)
     {

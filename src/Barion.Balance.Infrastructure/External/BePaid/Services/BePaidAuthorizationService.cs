@@ -13,4 +13,9 @@ public class BePaidAuthorizationService(IConfiguration configuration)
 
         return requestMessage;
     }
+
+    public bool ValidateReceivedWebHookRequest(string headerValue)
+    {
+        return headerValue == configuration["BEPAID_TOKEN"];
+    }
 }

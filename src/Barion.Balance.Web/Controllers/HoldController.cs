@@ -1,6 +1,7 @@
 using Barion.Balance.Application.Holds.Commands;
 using Barion.Balance.Application.Holds.Queries;
 using Barion.Balance.Domain.Services;
+using Barion.Balance.Web.Infrastructure.Attributes;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,6 +15,7 @@ namespace Barion.Balance.Web.Controllers;
 public class HoldController(ISender sender, IMediator mediator, IPaymentSystemConfigurationService configurationService) 
     : MediatrController(sender, mediator)
 {
+    
     /// <summary>
     /// Возвращает коллекцию холдов
     /// </summary>

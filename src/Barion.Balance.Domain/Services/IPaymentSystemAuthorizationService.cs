@@ -1,3 +1,5 @@
+using System.Net.Http.Headers;
+
 namespace Barion.Balance.Domain.Services;
 
 public interface IPaymentSystemAuthorizationService
@@ -9,4 +11,6 @@ public interface IPaymentSystemAuthorizationService
     /// <param name="requestMessage"></param>
     /// <returns></returns>
     public HttpRequestMessage Authorize(HttpRequestMessage requestMessage);
+
+    public bool ValidateReceivedWebHookRequest(string headerValue);
 }
