@@ -147,6 +147,8 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                     ReceiptUrl = table.Column<string>(type: "text", nullable: true),
                     CapturedHoldId = table.Column<int>(type: "integer", nullable: true),
                     PaymentSystemWidgetId = table.Column<int>(type: "integer", nullable: true),
+                    CaptureDebtorId = table.Column<int>(type: "integer", nullable: true),
+                    IsRefund = table.Column<bool>(type: "boolean", nullable: false),
                     Created = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<string>(type: "text", nullable: true),
                     LastModified = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -178,6 +180,57 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                         name: "FK_Payments_PaymentSystemConfigurations_PaymentSystemConfigura~",
                         column: x => x.PaymentSystemConfigurationId,
                         principalTable: "PaymentSystemConfigurations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Debtor",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<string>(type: "text", nullable: true),
+                    PaymentMethodId = table.Column<int>(type: "integer", nullable: true),
+                    PaidResourceTypeId = table.Column<int>(type: "integer", nullable: true),
+                    PaymentSystemConfigurationId = table.Column<int>(type: "integer", nullable: true),
+                    OperatorId = table.Column<string>(type: "text", nullable: false),
+                    PaidResourceId = table.Column<string>(type: "text", nullable: true),
+                    NewPaymentId = table.Column<int>(type: "integer", nullable: true),
+                    AdditionalData = table.Column<string>(type: "text", nullable: true),
+                    CaptureAttemptCount = table.Column<int>(type: "integer", nullable: false),
+                    LastAttempt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Created = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    LastModified = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    LastModifiedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Debtor", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Debtor_PaidResourceType_PaidResourceTypeId",
+                        column: x => x.PaidResourceTypeId,
+                        principalTable: "PaidResourceType",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Debtor_PaymentMethods_PaymentMethodId",
+                        column: x => x.PaymentMethodId,
+                        principalTable: "PaymentMethods",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Debtor_PaymentSystemConfigurations_PaymentSystemConfigurati~",
+                        column: x => x.PaymentSystemConfigurationId,
+                        principalTable: "PaymentSystemConfigurations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Debtor_Payments_NewPaymentId",
+                        column: x => x.NewPaymentId,
+                        principalTable: "Payments",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -292,6 +345,27 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Debtor_NewPaymentId",
+                table: "Debtor",
+                column: "NewPaymentId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Debtor_PaidResourceTypeId",
+                table: "Debtor",
+                column: "PaidResourceTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Debtor_PaymentMethodId",
+                table: "Debtor",
+                column: "PaymentMethodId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Debtor_PaymentSystemConfigurationId",
+                table: "Debtor",
+                column: "PaymentSystemConfigurationId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Holds_PaidResourceTypeId",
                 table: "Holds",
                 column: "PaidResourceTypeId");
@@ -373,6 +447,9 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Debtor");
+
             migrationBuilder.DropTable(
                 name: "PaymentSystemWidget");
 

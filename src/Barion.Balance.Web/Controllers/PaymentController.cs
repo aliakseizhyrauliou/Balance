@@ -40,4 +40,15 @@ public class PaymentController(ISender sender, IMediator mediator, IWidgetUseCas
     {
         await mediator.Send(command, cancellationToken);
     }
+
+    /// <summary>
+    /// Возврат средств
+    /// </summary>
+    /// <param name="command"></param>
+    /// <param name="cancellationToken"></param>
+    [HttpPost("refund")]
+    public async Task Refund([FromBody] RefundPaymentCommand command, CancellationToken cancellationToken)
+    {
+        await mediator.Send(command, cancellationToken);
+    }
 }

@@ -82,4 +82,13 @@ public class Payment : BaseAuditableEntity
     /// </summary>
     public int? PaymentSystemWidgetId { get; set; }
     public PaymentSystemWidget? PaymentSystemWidgets { get; set; }
+
+    /// <summary>
+    /// Если этот платеж был создан для должника
+    /// </summary>
+    public int? CaptureDebtorId { get; set; }
+    public Debtor? CaptureDebtor { get; set; }
+
+    
+    public bool IsRefund { get; set; }
 }

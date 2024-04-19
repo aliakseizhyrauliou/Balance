@@ -92,4 +92,17 @@ public interface IPaymentSystemService
         PaymentMethod paymentMethod,
         PaymentSystemConfiguration paymentSystemConfiguration,
         CancellationToken cancellationToken);
+
+
+    /// <summary>
+    /// Возврат средств
+    /// </summary>
+    /// <param name="payment"></param>
+    /// <param name="paymentMethod"></param>
+    /// <param name="paymentSystemConfiguration"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<ProcessRefundPaymentSystemResult> Refund(Payment payment,
+        PaymentSystemConfiguration paymentSystemConfiguration,
+        CancellationToken cancellationToken);
 }

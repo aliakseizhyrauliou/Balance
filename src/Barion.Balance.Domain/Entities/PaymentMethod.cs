@@ -61,4 +61,6 @@ public class PaymentMethod : BaseAuditableEntity
     public ICollection<Receipt>? Receipts { get; set; }
     public ICollection<Hold>? Holds { get; set; }
     public ICollection<Payment>? Payments { get; set; }
+    
+    public ICollection<Debtor>? Debtors { get; set; }
 }

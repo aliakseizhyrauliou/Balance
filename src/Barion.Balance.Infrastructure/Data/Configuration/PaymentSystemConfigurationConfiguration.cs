@@ -29,5 +29,10 @@ public class PaymentSystemConfigurationConfiguration : IEntityTypeConfiguration<
             .WithOne(x => x.PaymentSystemConfiguration)
             .HasForeignKey(x => x.PaymentSystemConfigurationId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(x => x.Debtors)
+            .WithOne(x => x.PaymentSystemConfiguration)
+            .HasForeignKey(x => x.PaymentSystemConfigurationId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

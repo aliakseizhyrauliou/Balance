@@ -33,14 +33,15 @@ public static class BePaidModelBuilderHelper
             }
         };
     }
-    public static ParentIdRoot BuildParentIdModel(string parentId, int amount)
+    public static ParentIdRoot BuildParentIdModel(string parentId, int amount, string reason = null)
     {
         return new ParentIdRoot
         {
             Request = new ParentIdRequest
             {
                 ParentId = parentId,
-                Amount = amount
+                Amount = amount,
+                Reason = reason
             }
         };
     }

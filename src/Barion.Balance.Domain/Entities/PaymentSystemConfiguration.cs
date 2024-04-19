@@ -1,3 +1,4 @@
+using System.Collections;
 using System.ComponentModel.DataAnnotations.Schema;
 using Barion.Balance.Domain.Common;
 
@@ -39,6 +40,12 @@ public class PaymentSystemConfiguration : BaseAuditableEntity
     public ICollection<Receipt>? Receipts { get; set; }
 
     
+    /// <summary>
+    /// Должники
+    /// </summary>
+    public ICollection<Debtor>? Debtors { get; set; }
+
+
     /// <summary>
     /// Является ли текущей платежной системой
     /// </summary>

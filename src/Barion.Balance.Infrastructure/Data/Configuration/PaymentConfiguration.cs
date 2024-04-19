@@ -20,5 +20,10 @@ public class PaymentConfiguration :  IEntityTypeConfiguration<Payment>
             .WithOne(x => x.Payment)
             .HasForeignKey<PaymentSystemWidget>(x => x.PaymentId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.CaptureDebtor)
+            .WithOne(x => x.NewPayment)
+            .HasForeignKey<Debtor>(x => x.NewPaymentId)
+            .OnDelete(DeleteBehavior.Cascade);
     }    
 }

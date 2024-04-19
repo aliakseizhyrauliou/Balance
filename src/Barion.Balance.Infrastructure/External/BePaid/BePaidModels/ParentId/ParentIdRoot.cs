@@ -15,4 +15,7 @@ public class ParentIdRequest
 
     [JsonProperty(PropertyName = "amount")]
     public required int Amount { get; set; }
+
+    [JsonProperty(PropertyName = "reason")]
+    public string? Reason { get; set; }
 }

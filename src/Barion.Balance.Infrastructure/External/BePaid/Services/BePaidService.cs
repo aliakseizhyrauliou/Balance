@@ -151,6 +151,25 @@ public partial class BePaidService(
         return await ProcessPaymentPaymentSystemResult(payment, sendResult, paymentSystemConfiguration, cancellationToken);
     }
 
+    public async Task<ProcessRefundPaymentSystemResult> Refund(Payment payment, 
+        PaymentSystemConfiguration paymentSystemConfiguration,
+        CancellationToken cancellationToken)
+    {
+        const string refundReason = "Возврат сердств";
+        
+        var bePaidConfiguration = await CastToBePaidConfiguration(paymentSystemConfiguration);
+
+        var modelForSending =
+            BePaidModelBuilderHelper.BuildParentIdModel(payment.PaymentSystemTransactionId, 
+                BePaidAmountConverterHelper.ConvertToBePaidFormat(payment.Amount), refundReason);
+
+        var httpMessage = BuildHttpRequestMessage(modelForSending, HttpMethod.Post, bePaidConfiguration.Urls.RefundUrl.Url);
+
+        var sendResult = await SendMessageAndCast<TransactionRoot>(httpMessage, cancellationToken);
+
+        return await ProcessRefundPaymentSystemResponse(payment, sendResult, cancellationToken);    
+    }
+
     public async Task<ProcessCaptureHoldPaymentSystemResult> CaptureHold(Hold captureHold,
         PaymentSystemConfiguration paymentSystemConfiguration,
         CancellationToken cancellationToken)

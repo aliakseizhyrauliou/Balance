@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Barion.Balance.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(BalanceDbContext))]
-    [Migration("20240418202631_Initial")]
+    [Migration("20240419073349_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -24,6 +24,74 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Barion.Balance.Domain.Entities.Debtor", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AdditionalData")
+                        .HasColumnType("text");
+
+                    b.Property<int>("CaptureAttemptCount")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("Created")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LastAttempt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("LastModified")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("NewPaymentId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("OperatorId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PaidResourceId")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("PaidResourceTypeId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("PaymentMethodId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("PaymentSystemConfigurationId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NewPaymentId")
+                        .IsUnique();
+
+                    b.HasIndex("PaidResourceTypeId");
+
+                    b.HasIndex("PaymentMethodId");
+
+                    b.HasIndex("PaymentSystemConfigurationId");
+
+                    b.ToTable("Debtor");
+                });
 
             modelBuilder.Entity("Barion.Balance.Domain.Entities.Hold", b =>
                 {
@@ -152,6 +220,9 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("numeric");
 
+                    b.Property<int?>("CaptureDebtorId")
+                        .HasColumnType("integer");
+
                     b.Property<int?>("CapturedHoldId")
                         .HasColumnType("integer");
 
@@ -165,6 +236,9 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsRefund")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsSuccess")
@@ -486,6 +560,37 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                     b.ToTable("Receipts");
                 });
 
+            modelBuilder.Entity("Barion.Balance.Domain.Entities.Debtor", b =>
+                {
+                    b.HasOne("Barion.Balance.Domain.Entities.Payment", "NewPayment")
+                        .WithOne("CaptureDebtor")
+                        .HasForeignKey("Barion.Balance.Domain.Entities.Debtor", "NewPaymentId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Barion.Balance.Domain.Entities.PaidResourceType", "PaidResourceType")
+                        .WithMany("Debtors")
+                        .HasForeignKey("PaidResourceTypeId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Barion.Balance.Domain.Entities.PaymentMethod", "PaymentMethod")
+                        .WithMany("Debtors")
+                        .HasForeignKey("PaymentMethodId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Barion.Balance.Domain.Entities.PaymentSystemConfiguration", "PaymentSystemConfiguration")
+                        .WithMany("Debtors")
+                        .HasForeignKey("PaymentSystemConfigurationId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("NewPayment");
+
+                    b.Navigation("PaidResourceType");
+
+                    b.Navigation("PaymentMethod");
+
+                    b.Navigation("PaymentSystemConfiguration");
+                });
+
             modelBuilder.Entity("Barion.Balance.Domain.Entities.Hold", b =>
                 {
                     b.HasOne("Barion.Balance.Domain.Entities.PaidResourceType", "PaidResourceType")
@@ -615,6 +720,8 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Barion.Balance.Domain.Entities.PaidResourceType", b =>
                 {
+                    b.Navigation("Debtors");
+
                     b.Navigation("Holds");
 
                     b.Navigation("PaymentSystemWidgets");
@@ -624,6 +731,8 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Barion.Balance.Domain.Entities.Payment", b =>
                 {
+                    b.Navigation("CaptureDebtor");
+
                     b.Navigation("PaymentSystemWidgets");
 
                     b.Navigation("Receipts");
@@ -631,6 +740,8 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Barion.Balance.Domain.Entities.PaymentMethod", b =>
                 {
+                    b.Navigation("Debtors");
+
                     b.Navigation("Holds");
 
                     b.Navigation("Payments");
@@ -640,6 +751,8 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Barion.Balance.Domain.Entities.PaymentSystemConfiguration", b =>
                 {
+                    b.Navigation("Debtors");
+
                     b.Navigation("Holds");
 
                     b.Navigation("PaymentSystemWidgets");

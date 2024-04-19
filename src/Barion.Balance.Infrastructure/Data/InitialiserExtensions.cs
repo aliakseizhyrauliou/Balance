@@ -118,7 +118,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
                     ButtonText = "Привязать карту",
                     Language = "RU",
                     NotificationUrl =
-                        "https://bd3f-46-28-96-178.ngrok-free.app/api/BePaid/verifyHoldNotification",
+                        "https://df93-134-17-4-170.ngrok-free.app/api/BePaid/verifyHoldNotification",
                     SaveCardToggle = new SaveCardToggle
                     {
                         Display = true,
@@ -166,7 +166,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
                     ButtonText = "Оплата",
                     Language = "RU",
                     NotificationUrl =
-                        "https://bd3f-46-28-96-178.ngrok-free.app/api/BePaid/verifyPaymentNotification",
+                        "https://df93-134-17-4-170.ngrok-free.app/api/BePaid/verifyPaymentNotification",
                     SaveCardToggle = new SaveCardToggle
                     {
                         Display = true,
@@ -214,7 +214,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
                     ButtonText = "Привязать карту",
                     Language = "RU",
                     NotificationUrl =
-                        "https://bd3f-46-28-96-178.ngrok-free.app/api/BePaid/verifyPaymentMethodNotification",
+                        "https://df93-134-17-4-170.ngrok-free.app/api/BePaid/verifyPaymentMethodNotification",
                     SaveCardToggle = new SaveCardToggle
                     {
                         Display = true,
