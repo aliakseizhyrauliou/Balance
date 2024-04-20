@@ -13,4 +13,6 @@ public class GeneratePaymentWidgetDto
     public Dictionary<string, string>? AdditionalData { get; set; }
     
     public required int PaidResourceTypeId { get; set; }
+    
+    public required int PaymentSystemConfigurationId { get; set; }
 }

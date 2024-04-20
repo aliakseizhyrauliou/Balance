@@ -1,5 +1,6 @@
 using Barion.Balance.Application.Common.Repositories;
 using Barion.Balance.Domain.Entities;
+using FluentValidation;
 using MediatR;
 
 namespace Barion.Balance.Application.PaidResourseTypes.Commands;
@@ -7,6 +8,15 @@ namespace Barion.Balance.Application.PaidResourseTypes.Commands;
 public record CreatePaidResourceTypeCommand : IRequest<int>
 {
     public required string TypeName { get; set; }
+}
+
+public class CreatePaidResourceTypeCommandValidator : AbstractValidator<CreatePaidResourceTypeCommand>
+{
+    public CreatePaidResourceTypeCommandValidator()
+    {
+        RuleFor(x => x.TypeName)
+            .NotNull();
+    }
 }
 
 public class CreatePaidResourceTypeCommandHandler(IPaidResourceTypeRepository repository) 

@@ -21,6 +21,7 @@ public class BePaidController(ISender sender, IMediator mediator)
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [EnsureBePaid]
+    [SetBePaidIsCurrentUser]
     [HttpPost("verifyPaymentMethodNotification")]
     public async Task<IActionResult> VerifyPaymentMethodNotification(CancellationToken cancellationToken)
     {
@@ -37,6 +38,7 @@ public class BePaidController(ISender sender, IMediator mediator)
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [EnsureBePaid]
+    [SetBePaidIsCurrentUser]
     [HttpPost("verifyPaymentNotification")]
     public async Task<IActionResult> VerifyPaymentNotification(CancellationToken cancellationToken)
     {

@@ -26,7 +26,8 @@ public class HoldUseCases(IMediator mediator, IUser currentUser) : BaseUseCases(
             Amount = dto.Amount,
             PaidResourceTypeId = dto.PaidResourceTypeId,
             PaymentMethodId = selectedMethod.Id,
-            AdditionalData = dto.AdditionalData
+            AdditionalData = dto.AdditionalData,
+            PaymentSystemConfigurationId = dto.PaymentSystemConfigurationId
         }, cancellationToken);
 
         return new CreatedEntityDto<int>(createdHold);

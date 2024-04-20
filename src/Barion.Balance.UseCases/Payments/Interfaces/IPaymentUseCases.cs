@@ -6,6 +6,6 @@ namespace Barion.Balance.UseCases.Payments.Interfaces;
 
 public interface IPaymentUseCases : IBaseUseCases
 {
-    Task<CreatedEntityDto<int>> PaymentWithSelectedPaymentMethod(PaymentWithSelectedPaymentMethodDto dto,
+    Task<PaymentResponseDto> PaymentWithSelectedPaymentMethod(PaymentWithSelectedPaymentMethodDto dto,
         CancellationToken cancellationToken = default);
 }

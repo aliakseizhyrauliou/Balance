@@ -1,6 +1,8 @@
 using System.Data;
+using Barion.Balance.Application.Common.Exceptions;
 using Barion.Balance.Application.Common.Interfaces;
 using Barion.Balance.Application.Common.Repositories;
+using Barion.Balance.Domain.Entities;
 using Barion.Balance.Domain.Enums;
 using Barion.Balance.Domain.Events.PaymentSystemWidgetGenerations;
 using Barion.Balance.Domain.Services;
@@ -17,10 +19,10 @@ public record CreateWidgetCommand : IRequest
     public required string OperatorId { get; set; }
     public string? PaidResourceId { get; set; }
     public string? AdditionalData { get; set; }
-
     public required int PaidResourceTypeId { get; set; }
-
     public decimal Amount { get; set; }
+
+    public required int PaymentSystemConfigurationId { get; set; }
 }
 
 public sealed class CreateWidgetCommandHandler(
@@ -37,13 +39,12 @@ public sealed class CreateWidgetCommandHandler(
         CancellationToken cancellationToken)
     {
         var currentPaymentSchemaConfiguration =
-            await paymentSystemConfigurationRepository.GetCurrentSchemaAsync(cancellationToken);
+            await paymentSystemConfigurationRepository.GetByIdAsync(request.PaymentSystemConfigurationId, cancellationToken);
 
         if (currentPaymentSchemaConfiguration is null)
         {
-            throw new Exception("current_payment_system_configuration_not_found");
+            throw new NotFoundException("payment_system_configuration_not_found");
         }
-
         
         //Создам модель, которая отражет причину открытия виджета платежной системы
 
@@ -77,10 +78,10 @@ public sealed class CreateWidgetCommandHandler(
         }
     }
 
-    private Domain.Entities.PaymentSystemWidget BuildPaymentSystemWidgetGeneration(int currentPaymentSystemConfiguration,
+    private PaymentSystemWidget BuildPaymentSystemWidgetGeneration(int currentPaymentSystemConfiguration,
         CreateWidgetCommand request)  
     {
-        return new Domain.Entities.PaymentSystemWidget
+        return new PaymentSystemWidget
         {
             UserId = currentUserData.Id!,
             FirstName = currentUserData.FirstName!,

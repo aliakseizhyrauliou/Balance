@@ -54,7 +54,7 @@ public class PaymentController(ISender sender,
     /// <param name="cancellationToken"></param>
     [HttpPost("paymentWithSelectedPaymentMethod")]
     [ProducesResponseType(typeof(CreatedEntityDto<int>), 200)]
-    public async Task<CreatedEntityDto<int>> PaymentWithSelectedPaymentMethod([FromBody] PaymentWithSelectedPaymentMethodDto dto,
+    public async Task<PaymentResponseDto> PaymentWithSelectedPaymentMethod([FromBody] PaymentWithSelectedPaymentMethodDto dto,
         CancellationToken cancellationToken = default)
     {
         return await paymentUseCases.PaymentWithSelectedPaymentMethod(dto, cancellationToken);

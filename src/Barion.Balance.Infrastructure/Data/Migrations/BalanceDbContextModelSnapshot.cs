@@ -33,6 +33,9 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                     b.Property<string>("AdditionalData")
                         .HasColumnType("text");
 
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric");
+
                     b.Property<int>("CaptureAttemptCount")
                         .HasColumnType("integer");
 
@@ -45,7 +48,7 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTime?>("LastAttempt")
+                    b.Property<DateTimeOffset?>("LastCaptureAttempt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTimeOffset>("LastModified")
@@ -87,7 +90,7 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
 
                     b.HasIndex("PaymentSystemConfigurationId");
 
-                    b.ToTable("Debtor");
+                    b.ToTable("Debtors");
                 });
 
             modelBuilder.Entity("Barion.Balance.Domain.Entities.Hold", b =>

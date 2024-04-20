@@ -11,4 +11,8 @@ public record PaymentWithSelectedPaymentMethodDto
     public required int PaidResourceTypeId { get; set; }
     
     public Dictionary<string, string>? AdditionalData { get; set; }
+    
+    public bool WriteToDebtorsInCaseFail { get; set; }
+
+    public required int PaymentSystemConfigurationId { get; set; }
 }

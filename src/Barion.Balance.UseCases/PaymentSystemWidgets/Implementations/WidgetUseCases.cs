@@ -22,7 +22,8 @@ public class WidgetUseCases(IMediator mediator, IUser currentUser)
             OperatorId = dto.OperatorId,
             AdditionalData = JsonConvert.SerializeObject(dto.AdditionalData),
             PaidResourceId = dto.PaidResourceId,
-            PaidResourceTypeId = dto.PaidResourceTypeId
+            PaidResourceTypeId = dto.PaidResourceTypeId,
+            PaymentSystemConfigurationId = dto.PaymentSystemConfigurationId
         }, cancellationToken);
 
         var checkout = await mediator.Send(new GetActivePaymentSystemWidgetQuery(), cancellationToken);
@@ -40,7 +41,8 @@ public class WidgetUseCases(IMediator mediator, IUser currentUser)
             AdditionalData = JsonConvert.SerializeObject(dto.AdditionalData),
             PaidResourceId = dto.PaidResourceId,
             PaidResourceTypeId = dto.PaidResourceTypeId,
-            Amount = dto.Amount
+            Amount = dto.Amount,
+            PaymentSystemConfigurationId = dto.PaymentSystemConfigurationId
         }, cancellationToken);
 
         var checkout = await mediator.Send(new GetActivePaymentSystemWidgetQuery(), cancellationToken);

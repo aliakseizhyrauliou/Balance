@@ -185,12 +185,13 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Debtor",
+                name: "Debtors",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserId = table.Column<string>(type: "text", nullable: true),
+                    Amount = table.Column<decimal>(type: "numeric", nullable: false),
                     PaymentMethodId = table.Column<int>(type: "integer", nullable: true),
                     PaidResourceTypeId = table.Column<int>(type: "integer", nullable: true),
                     PaymentSystemConfigurationId = table.Column<int>(type: "integer", nullable: true),
@@ -199,7 +200,7 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                     NewPaymentId = table.Column<int>(type: "integer", nullable: true),
                     AdditionalData = table.Column<string>(type: "text", nullable: true),
                     CaptureAttemptCount = table.Column<int>(type: "integer", nullable: false),
-                    LastAttempt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastCaptureAttempt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     Created = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<string>(type: "text", nullable: true),
                     LastModified = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -208,27 +209,27 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Debtor", x => x.Id);
+                    table.PrimaryKey("PK_Debtors", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Debtor_PaidResourceType_PaidResourceTypeId",
+                        name: "FK_Debtors_PaidResourceType_PaidResourceTypeId",
                         column: x => x.PaidResourceTypeId,
                         principalTable: "PaidResourceType",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Debtor_PaymentMethods_PaymentMethodId",
+                        name: "FK_Debtors_PaymentMethods_PaymentMethodId",
                         column: x => x.PaymentMethodId,
                         principalTable: "PaymentMethods",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Debtor_PaymentSystemConfigurations_PaymentSystemConfigurati~",
+                        name: "FK_Debtors_PaymentSystemConfigurations_PaymentSystemConfigurat~",
                         column: x => x.PaymentSystemConfigurationId,
                         principalTable: "PaymentSystemConfigurations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Debtor_Payments_NewPaymentId",
+                        name: "FK_Debtors_Payments_NewPaymentId",
                         column: x => x.NewPaymentId,
                         principalTable: "Payments",
                         principalColumn: "Id",
@@ -353,24 +354,24 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Debtor_NewPaymentId",
-                table: "Debtor",
+                name: "IX_Debtors_NewPaymentId",
+                table: "Debtors",
                 column: "NewPaymentId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Debtor_PaidResourceTypeId",
-                table: "Debtor",
+                name: "IX_Debtors_PaidResourceTypeId",
+                table: "Debtors",
                 column: "PaidResourceTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Debtor_PaymentMethodId",
-                table: "Debtor",
+                name: "IX_Debtors_PaymentMethodId",
+                table: "Debtors",
                 column: "PaymentMethodId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Debtor_PaymentSystemConfigurationId",
-                table: "Debtor",
+                name: "IX_Debtors_PaymentSystemConfigurationId",
+                table: "Debtors",
                 column: "PaymentSystemConfigurationId");
 
             migrationBuilder.CreateIndex(
@@ -461,7 +462,7 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Debtor");
+                name: "Debtors");
 
             migrationBuilder.DropTable(
                 name: "PaymentSystemWidget");

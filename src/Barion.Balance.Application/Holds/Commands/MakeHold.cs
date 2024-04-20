@@ -14,16 +14,12 @@ namespace Barion.Balance.Application.Holds.Commands;
 public record MakeHoldCommand : IRequest<int>
 {
     public required string UserId { get; set; }
-    
     public required string PaidResourceId { get; set; }
-    
     public required string OperatorId { get; set; }
     public required decimal Amount { get; set; }
-
     public required int PaidResourceTypeId { get; set; }
-    
     public required int PaymentMethodId { get; set; }
-
+    public required int PaymentSystemConfigurationId { get; set; }
     public Dictionary<string, string>? AdditionalData { get; set; }
 }
 
@@ -66,11 +62,12 @@ public sealed class MakeHoldCommandHandler(IPaymentSystemService paymentSystemSe
             throw new NotFoundException("payment_method_was_not_found");
         }
 
-        var currentPaymentSystemConfiguration = await configurationRepository.GetCurrentSchemaAsync(cancellationToken);
+        var paymentSystemConfiguration =
+            await configurationRepository.GetByIdAsync(request.PaymentSystemConfigurationId, cancellationToken);
 
-        if (currentPaymentSystemConfiguration is null)
+        if (paymentSystemConfiguration is null)
         {
-            throw new Exception("current_payment_system_configuration_not_found");
+            throw new Exception("payment_system_configuration_not_found");
         }
         //Создаем модель 
         var domainModel = new Hold
@@ -82,14 +79,14 @@ public sealed class MakeHoldCommandHandler(IPaymentSystemService paymentSystemSe
             Amount = request.Amount,
             PaidResourceTypeId = request.PaidResourceTypeId,
             AdditionalData = JsonConvert.SerializeObject(request.AdditionalData),
-            PaymentSystemConfigurationId = currentPaymentSystemConfiguration.Id
+            PaymentSystemConfigurationId = paymentSystemConfiguration.Id
         };
         
         //Данный метод ничего не сохранаяет в базу, это не его ответственность
         //Domain слой вообще не должен быть в курсе, что что-то где-то храниться
         var makeHoldRequestToPaymentSystemResult = await paymentSystemService.Hold(domainModel,
             paymentMethod, 
-            currentPaymentSystemConfiguration, 
+            paymentSystemConfiguration, 
             cancellationToken);
 
         if (makeHoldRequestToPaymentSystemResult is { IsOk: true, Hold: not null })

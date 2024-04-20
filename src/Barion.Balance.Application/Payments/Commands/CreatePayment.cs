@@ -15,18 +15,18 @@ public class CreatePaymentCommand : IRequest<int>
     /// <summary>
     /// Идентификатор пользователя 
     /// </summary>
-    public  string UserId { get; set; }
+    public required string UserId { get; set; }
 
     /// <summary>
     /// Сумма платежа
     /// </summary>
-    public  decimal Amount { get; set; }
+    public decimal Amount { get; set; }
 
     /// <summary>
     ///Id того, за что была оплата
     ///Id бронирования, зарядки или парковки
     /// </summary>
-    public  string PaidResourceId { get; set; }
+    public required string PaidResourceId { get; set; }
 
     /// <summary>
     /// Специфическая инфа платежа.
@@ -37,7 +37,7 @@ public class CreatePaymentCommand : IRequest<int>
     /// <summary>
     /// Получатель суммы транзакции
     /// </summary>
-    public  string OperatorId { get; set; }
+    public required string OperatorId { get; set; }
 
 
     /// <summary>
@@ -51,6 +51,8 @@ public class CreatePaymentCommand : IRequest<int>
     public  int PaymentMethodId { get; set; }
 
     public  int PaidResourceTypeId { get; set; }
+    
+    public required int PaymentSystemConfigurationId { get; set; }
 }
 
 public class CreatePaymentCommandHandler(IPaymentSystemService paymentSystemService,
@@ -73,11 +75,13 @@ public class CreatePaymentCommandHandler(IPaymentSystemService paymentSystemServ
             throw new NotFoundException("paid_resource_not_found");
         }
 
-        var paymentSystemcConfiguration = await paymentSystemConfigurationRepository.GetCurrentSchemaAsync(cancellationToken);
+        var paymentSystemConfiguration =
+            await paymentSystemConfigurationRepository.GetByIdAsync(request.PaymentSystemConfigurationId,
+                cancellationToken);
 
-        if (paymentSystemcConfiguration is null)
+        if (paymentSystemConfiguration is null)
         {
-            throw new Exception("current_payment_system_configuration_not_found");
+            throw new NotFoundException("payment_system_configuration_not_found");
         }
 
         var accountRecord = new Payment
@@ -90,15 +94,15 @@ public class CreatePaymentCommandHandler(IPaymentSystemService paymentSystemServ
             PaymentMethodId = request.PaymentMethodId,
             PaidResourceTypeId = request.PaidResourceTypeId,
             AdditionalData = JsonConvert.SerializeObject(request.AdditionalData),
-            PaymentSystemConfigurationId = paymentSystemcConfiguration.Id
+            PaymentSystemConfigurationId = paymentSystemConfiguration.Id
         };
 
         var paymentResult = await paymentSystemService.Payment(accountRecord, 
             paymentMethod, 
-            paymentSystemcConfiguration, 
+            paymentSystemConfiguration, 
             cancellationToken);
-        
-        if (paymentResult is not {IsOk: true, Payment: not null})
+
+        if (paymentResult is not { IsOk: true, Payment: not null })
             throw new PaymentSystemException(paymentResult.FriendlyErrorMessage);
 
         await using var transaction = await paymentsRepository.BeginTransaction(IsolationLevel.ReadCommitted, cancellationToken);

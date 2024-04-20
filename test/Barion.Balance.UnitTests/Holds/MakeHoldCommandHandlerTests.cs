@@ -34,7 +34,8 @@ public class MakeHoldCommandHandlerTests
             OperatorId = It.IsAny<string>(),
             Amount = It.IsAny<int>(),
             PaidResourceTypeId = It.IsAny<int>(),
-            PaymentMethodId = It.IsAny<int>()
+            PaymentMethodId = It.IsAny<int>(),
+            PaymentSystemConfigurationId = It.IsAny<int>()
         };
 
         _paidResourceTypeRepository.Setup(x => x.GetByIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))

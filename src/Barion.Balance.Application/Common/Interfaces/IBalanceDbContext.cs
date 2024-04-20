@@ -13,6 +13,7 @@ public interface IBalanceDbContext
     DbSet<PaymentSystemConfiguration> PaymentSystemConfigurations { get; set; }
     DbSet<PaymentSystemWidget> PaymentSystemWidget { get; set; }
     DbSet<Receipt> Receipts { get; set; }
+    DbSet<Debtor> Debtors { get; set; }
 
     public Task MigrateDatabase();
     public int SaveChanges();

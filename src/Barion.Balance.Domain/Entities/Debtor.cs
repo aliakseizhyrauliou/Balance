@@ -6,6 +6,8 @@ public class Debtor : BaseAuditableEntity
 {
     public string? UserId { get; set; }
 
+    public required decimal Amount { get; set; }
+
     /// <summary>
     /// Карта
     /// </summary>
@@ -24,8 +26,8 @@ public class Debtor : BaseAuditableEntity
     /// Платежная система
     /// </summary>
     public int? PaymentSystemConfigurationId { get; set; }
-
-    public PaymentSystemConfiguration PaymentSystemConfiguration { get; set; }
+    public PaymentSystemConfiguration? PaymentSystemConfiguration { get; set; }
+    
 
     public required string OperatorId { get; set; }
     public string? PaidResourceId { get; set; }
@@ -36,6 +38,7 @@ public class Debtor : BaseAuditableEntity
     public string? AdditionalData { get; set; }
 
     public int CaptureAttemptCount { get; set; }
-    public DateTime? LastAttempt { get; set; }
+    
+    public DateTimeOffset? LastCaptureAttempt { get; set; }
     
 }
