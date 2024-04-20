@@ -57,6 +57,7 @@ public class PaymentUseCases(IMediator mediator, IUser currentUser) : BaseUseCas
                     PaymentSystemConfigurationId = dto.PaymentSystemConfigurationId,
                     PaidResourceId = dto.PaidResourceId,
                     Amount = dto.Amount,
+                    AdditionalData = dto.AdditionalData
                 };
 
                 var createdDebtorId = await mediator.Send(createDebtorCommand, cancellationToken);

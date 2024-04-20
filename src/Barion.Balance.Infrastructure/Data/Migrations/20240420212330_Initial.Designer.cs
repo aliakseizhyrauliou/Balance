@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Barion.Balance.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(BalanceDbContext))]
-    [Migration("20240420182440_Initial")]
+    [Migration("20240420212330_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -34,7 +34,7 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AdditionalData")
-                        .HasColumnType("text");
+                        .HasColumnType("jsonb");
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("numeric");
@@ -48,6 +48,12 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("text");
 
+                    b.Property<string>("DebtorCaptureLastErrorMessage")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsCaptured")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
@@ -59,6 +65,9 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
 
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("text");
+
+                    b.Property<bool>("NeedToCapture")
+                        .HasColumnType("boolean");
 
                     b.Property<int?>("NewPaymentId")
                         .HasColumnType("integer");
@@ -73,10 +82,10 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                     b.Property<int?>("PaidResourceTypeId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("PaymentMethodId")
+                    b.Property<int>("PaymentMethodId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("PaymentSystemConfigurationId")
+                    b.Property<int>("PaymentSystemConfigurationId")
                         .HasColumnType("integer");
 
                     b.Property<string>("UserId")
@@ -267,7 +276,7 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                     b.Property<int?>("PaymentMethodId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("PaymentSystemConfigurationId")
+                    b.Property<int>("PaymentSystemConfigurationId")
                         .HasColumnType("integer");
 
                     b.Property<string>("PaymentSystemTransactionId")
@@ -457,13 +466,13 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("PaidResourceTypeId")
+                    b.Property<int>("PaidResourceTypeId")
                         .HasColumnType("integer");
 
                     b.Property<int?>("PaymentId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("PaymentSystemConfigurationId")
+                    b.Property<int>("PaymentSystemConfigurationId")
                         .HasColumnType("integer");
 
                     b.Property<string>("PaymentSystemMessage")
@@ -586,12 +595,14 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                     b.HasOne("Barion.Balance.Domain.Entities.PaymentMethod", "PaymentMethod")
                         .WithMany("Debtors")
                         .HasForeignKey("PaymentMethodId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Barion.Balance.Domain.Entities.PaymentSystemConfiguration", "PaymentSystemConfiguration")
                         .WithMany("Debtors")
                         .HasForeignKey("PaymentSystemConfigurationId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("NewPayment");
 
@@ -647,7 +658,8 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                     b.HasOne("Barion.Balance.Domain.Entities.PaymentSystemConfiguration", "PaymentSystemConfiguration")
                         .WithMany("Payments")
                         .HasForeignKey("PaymentSystemConfigurationId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("CapturedHold");
 
@@ -668,7 +680,8 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                     b.HasOne("Barion.Balance.Domain.Entities.PaidResourceType", "PaidResourceType")
                         .WithMany("PaymentSystemWidgets")
                         .HasForeignKey("PaidResourceTypeId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Barion.Balance.Domain.Entities.Payment", "Payment")
                         .WithOne("PaymentSystemWidgets")
@@ -678,7 +691,8 @@ namespace Barion.Balance.Infrastructure.Data.Migrations
                     b.HasOne("Barion.Balance.Domain.Entities.PaymentSystemConfiguration", "PaymentSystemConfiguration")
                         .WithMany("PaymentSystemWidgets")
                         .HasForeignKey("PaymentSystemConfigurationId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Hold");
 

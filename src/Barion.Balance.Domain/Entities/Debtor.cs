@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Barion.Balance.Domain.Common;
 
 namespace Barion.Balance.Domain.Entities;
@@ -11,7 +12,7 @@ public class Debtor : BaseAuditableEntity
     /// <summary>
     /// Карта
     /// </summary>
-    public int? PaymentMethodId { get; set; }
+    public int PaymentMethodId { get; set; }
 
     public PaymentMethod? PaymentMethod { get; set; }
 
@@ -25,7 +26,7 @@ public class Debtor : BaseAuditableEntity
     /// <summary>
     /// Платежная система
     /// </summary>
-    public int? PaymentSystemConfigurationId { get; set; }
+    public int PaymentSystemConfigurationId { get; set; }
     public PaymentSystemConfiguration? PaymentSystemConfiguration { get; set; }
     
 
@@ -35,10 +36,19 @@ public class Debtor : BaseAuditableEntity
     public int? NewPaymentId { get; set; }
     public Payment? NewPayment { get; set; }
 
+    /// <summary>
+    /// Дополнительная информация
+    /// </summary>
+    [Column(TypeName = "jsonb")]
     public string? AdditionalData { get; set; }
 
     public int CaptureAttemptCount { get; set; }
     
     public DateTimeOffset? LastCaptureAttempt { get; set; }
-    
+
+    public string? DebtorCaptureLastErrorMessage { get; set; }
+
+    public bool IsCaptured { get; set; }
+
+    public bool NeedToCapture { get; set; }
 }

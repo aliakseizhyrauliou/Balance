@@ -64,7 +64,7 @@ public class Payment : BaseAuditableEntity
     /// <summary>
     /// Id конфигурации платежной системы
     /// </summary>
-    public int? PaymentSystemConfigurationId { get; set; }
+    public int PaymentSystemConfigurationId { get; set; }
     public PaymentSystemConfiguration? PaymentSystemConfiguration { get; set; }
     
     public string? ReceiptUrl { get; set; }

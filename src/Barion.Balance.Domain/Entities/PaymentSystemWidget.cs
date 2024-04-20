@@ -66,14 +66,14 @@ public class PaymentSystemWidget : BaseAuditableEntity
     /// <summary>
     /// Платежная система
     /// </summary>
-    public int? PaymentSystemConfigurationId { get; set; }
+    public int PaymentSystemConfigurationId { get; set; }
 
     public PaymentSystemConfiguration? PaymentSystemConfiguration { get; set; }
 
     /// <summary>
     /// Тип платного ресурса
     /// </summary>
-    public int? PaidResourceTypeId { get; set; }
+    public int PaidResourceTypeId { get; set; }
 
     public PaidResourceType? PaidResourceType { get; set; }
 

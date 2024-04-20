@@ -3,6 +3,7 @@ using Barion.Balance.Application.Common.Repositories;
 using Barion.Balance.Domain.Entities;
 using FluentValidation;
 using MediatR;
+using Newtonsoft.Json;
 
 namespace Barion.Balance.Application.Debtors.Commands;
 
@@ -26,7 +27,7 @@ public record CreateDebtorCommand : IRequest<int>
     public required string OperatorId { get; set; }
     public required string PaidResourceId { get; set; }
     
-    public string? AdditionalData { get; set; }
+    public Dictionary<string, string>? AdditionalData { get; set; }
 }
 
 public class CreateDebtorCommandValidator : AbstractValidator<CreateDebtorCommand>
@@ -84,10 +85,11 @@ public class CreateDebtorCommandHandler(
             PaymentSystemConfigurationId = request.PaymentSystemConfigurationId,
             OperatorId = request.OperatorId,
             PaidResourceId = request.PaidResourceId,
-            AdditionalData = request.AdditionalData,
+            AdditionalData = JsonConvert.SerializeObject(request.AdditionalData),
             CaptureAttemptCount = 0,
             Amount = request.Amount,
-            LastCaptureAttempt = null
+            LastCaptureAttempt = null,
+            NeedToCapture = true,
         };
 
         await debtorRepository.InsertAsync(newDebtor, cancellationToken);

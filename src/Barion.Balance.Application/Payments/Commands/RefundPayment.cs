@@ -32,15 +32,15 @@ public class RefundPaymentCommandHandler(IPaymentSystemService paymentSystemServ
             throw new InvalidArgumentException("payment_already_refunded");
         }
 
-        var currentPaymentSystemConfiguration = await paymentSystemConfigurationRepository.GetCurrentSchemaAsync(cancellationToken);
+        var paymentSystemConfiguration = await paymentSystemConfigurationRepository.GetByIdAsync(payment.PaymentSystemConfigurationId, cancellationToken);
 
-        if (currentPaymentSystemConfiguration is null)
+        if (paymentSystemConfiguration is null)
         {
-            throw new Exception("current_payment_system_configuration_not_found");
+            throw new Exception("payment_system_configuration_not_found");
         }
 
         var refundPaymentResult =
-            await paymentSystemService.Refund(payment, currentPaymentSystemConfiguration, cancellationToken);
+            await paymentSystemService.Refund(payment, paymentSystemConfiguration, cancellationToken);
 
         if (refundPaymentResult is { IsOk: false })
             throw new PaymentSystemException(refundPaymentResult.FriendlyErrorMessage);

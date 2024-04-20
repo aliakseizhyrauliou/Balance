@@ -84,7 +84,7 @@ public class CreatePaymentCommandHandler(IPaymentSystemService paymentSystemServ
             throw new NotFoundException("payment_system_configuration_not_found");
         }
 
-        var accountRecord = new Payment
+        var payment = new Payment
         {
             UserId = request.UserId,
             Amount = request.Amount,
@@ -97,7 +97,7 @@ public class CreatePaymentCommandHandler(IPaymentSystemService paymentSystemServ
             PaymentSystemConfigurationId = paymentSystemConfiguration.Id
         };
 
-        var paymentResult = await paymentSystemService.Payment(accountRecord, 
+        var paymentResult = await paymentSystemService.Payment(payment, 
             paymentMethod, 
             paymentSystemConfiguration, 
             cancellationToken);
