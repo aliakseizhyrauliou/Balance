@@ -1,5 +1,8 @@
 Сервис для работы с платежной системой BePaid. 
 
+
+![Project Architecture](achitecture.png)
+
 Используемый стек: .NET 8, PostgreSQL, Mediatr
 
 В функционал сервиса входит: 
