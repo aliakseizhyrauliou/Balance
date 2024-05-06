@@ -24,7 +24,7 @@ public static class BePaidModelBuilderHelper
                 Currency = "BYN",
                 Description = "Платеж",
                 Language = "ru",
-                Test = true,
+                Test = false,
                 CreditCard = new CreateTransactionCreditCard
                 {
                     Token = cardToken
@@ -58,8 +58,8 @@ public static class BePaidModelBuilderHelper
                 Description = "HOLD",
                 TrackingId = hold.Id.ToString(),
                 DuplicateCheck = true,
-                Language = "RU",
-                Test = true,
+                Language = "ru",
+                Test = false,
                 CreditCard = new CreateTransactionCreditCard
                 {
                     Token = cardToken

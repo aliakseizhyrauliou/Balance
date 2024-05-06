@@ -118,7 +118,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
                     ButtonText = "Привязать карту",
                     Language = "RU",
                     NotificationUrl =
-                        "https://8c3b-185-158-218-163.ngrok-free.app/api/BePaid/verifyHoldNotification",
+                        "https://48cf-134-17-4-170.ngrok-free.app/api/BePaid/verifyHoldNotification",
                     SaveCardToggle = new SaveCardToggle
                     {
                         Display = true,
@@ -146,7 +146,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
                     TrackingId = null
                 },
 
-                Test = true,
+                Test = false,
                 PaymentMethod = new PaymentMethod
                 {
                     ExcludedTypes = ["erip", "halva"]
@@ -166,7 +166,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
                     ButtonText = "Оплата",
                     Language = "RU",
                     NotificationUrl =
-                        "https://8c3b-185-158-218-163.ngrok-free.app/api/BePaid/verifyPaymentNotification",
+                        "https://48cf-134-17-4-170.ngrok-free.app/api/BePaid/verifyPaymentNotification",
                     SaveCardToggle = new SaveCardToggle
                     {
                         Display = true,
@@ -194,7 +194,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
                     TrackingId = null
                 },
 
-                Test = true,
+                Test = false,
                 PaymentMethod = new PaymentMethod
                 {
                     ExcludedTypes = ["erip", "halva"]
@@ -214,7 +214,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
                     ButtonText = "Привязать карту",
                     Language = "RU",
                     NotificationUrl =
-                        "https://8c3b-185-158-218-163.ngrok-free.app/api/BePaid/verifyPaymentMethodNotification",
+                        "https://48cf-134-17-4-170.ngrok-free.app/api/BePaid/verifyPaymentMethodNotification",
                     SaveCardToggle = new SaveCardToggle
                     {
                         Display = true,
@@ -242,7 +242,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
                     TrackingId = null
                 },
 
-                Test = true,
+                Test = false,
                 PaymentMethod = new PaymentMethod
                 {
                     ExcludedTypes = ["erip", "halva"]

@@ -39,7 +39,8 @@ public class PaymentSystemWidget : BaseAuditableEntity
     public decimal Amount { get; set; }
 
     /// <summary>
-    /// Успешно ли открытие виджета
+    /// Успешно ли создание виджета.
+    /// Имеется в виду не ответ от платежной системы, а сам факт создания виджета
     /// </summary>
     public bool IsSuccess { get; set; }
 
